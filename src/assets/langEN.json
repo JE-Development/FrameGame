@@ -1,0 +1,21 @@
+{
+  "lang": "en",
+  "langVis": "EN",
+  "register": {
+    "usernamePlaceholder": "Username",
+    "roomPlaceholder": "Room Code",
+    "joinButton": "Join Game",
+    "roomButton": "Create Room",
+    "listButton": "Public Rooms",
+    "gameInstructionsButton": "Game Instructions",
+    "wrongRoomCode": "Room doesn't exist",
+    "serverDown": "The FrameGame server is down",
+    "noUsername": "You have to choose an username",
+    "gameStarted": "Game already started",
+    "noRoomCode": "You have to enter a room code or create a room"
+  },
+  "misc": {
+    "noPublicRooms": "There are no public rooms",
+    "roomClosed": "Room closed by host"
+  }
+}

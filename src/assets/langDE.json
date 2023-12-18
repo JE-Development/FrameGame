@@ -1,0 +1,21 @@
+{
+  "lang": "de",
+  "langVis": "DE",
+  "register": {
+    "usernamePlaceholder": "Nutzername",
+    "roomPlaceholder": "Raumcode",
+    "joinButton": "Spiel beitreten",
+    "roomButton": "Raum erstellen",
+    "listButton": "Öffentliche Räume",
+    "gameInstructionsButton": "Spielanleitung",
+    "wrongRoomCode": "Raumcode existiert nicht",
+    "serverDown": "Der FrameGame Server ist offline",
+    "noUsername": "Du musst einen Nutzernamen festlegen",
+    "gameStarted": "Spiel ist bereits gestartet",
+    "noRoomCode": "Du musst ein Raumcode eingeben oder ein Raum erstellen"
+  },
+  "misc": {
+    "noPublicRooms": "Es gibt keine öffentliche Räume",
+    "roomClosed": "Der Raum wurde vom Host geschlossen"
+  }
+}
