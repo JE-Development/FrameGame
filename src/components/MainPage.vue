@@ -5,8 +5,7 @@
     <div>
 
         <div class="center-horizontal">
-          <!--<img src="../assets/logo_texture.png" style="width: 400px"/>/!-->
-          <h1>FrameGame</h1>
+          <img src="../assets/framegame_logo.png" style="width: 400px"/>
         </div>
       <div class="center-horizontal">
         <img :src="srcPb" class="pb pointer" @click="pbShow = true"/>
@@ -21,27 +20,18 @@
                   :placeholder="lang.register.usernamePlaceholder"
                   class="register-input shadow texture"/>
             </div>
-            <div style="margin-top: 10px"/>
-            <div>
-              <input
-                  ref="passinput"
-                  :value="pass"
-                  :placeholder="lang.register.roomPlaceholder"
-                  class="register-input shadow texture"/>
-            </div>
           </div>
         </div>
         <div style="margin-top: 10px"/>
+      <div class="center-horizontal">
         <div class="center-horizontal">
-          <UIButton :title="lang.register.joinButton" @click="onClickJoin" color="prim-color-background"/>
+          <UIButton :title="lang.register.roomButton" @click="onClickRoom" color="third-color-background"/>
         </div>
+        <div class="center-horizontal">
+          <UIButton :title="lang.register.listButton" @click="onClickPublic" color="fourth-color-background"/>
+        </div>
+      </div>
       <div style="height: 40px"></div>
-      <div class="center-horizontal">
-        <UIButton :title="lang.register.roomButton" @click="onClickRoom" color="third-color-background"/>
-      </div>
-      <div class="center-horizontal">
-        <UIButton :title="lang.register.listButton" @click="onClickPublic" color="fourth-color-background"/>
-      </div>
       <div class="center-horizontal">
         <UIButton :title="lang.register.gameInstructionsButton" @click="onClickInstruction" color="sec-color"/>
       </div>
