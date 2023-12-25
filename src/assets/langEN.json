@@ -14,6 +14,25 @@
     "gameStarted": "Game already started",
     "noRoomCode": "You have to enter a room code or create a room"
   },
+  "playerPage": {
+    "kickEveryoneButton": "Close Room",
+    "leaveButton": "Quit Game",
+    "startButton": "Start Game",
+    "addBotButton": "add bot",
+    "removeBotButton": "remove bot",
+    "heartCount": "Count of Hearts",
+    "allowGhostMode": "Allow Ghost Mode",
+    "visibility": "Public Room",
+    "waitForPlayer": "Wait for Players...",
+    "heartErrorNaN": "The value for the heart count is invalid.",
+    "heartErrorWrongNumber": "The value for the heart count must not be less than '1'.",
+    "heartErrorEmpty": "The text field for the heart count is empty!",
+    "needMorePlayers": "You need at least 2 players.",
+    "joinLink": "show URL"
+  },
+  "jwc": {
+    "joinButton": "Join Game"
+  },
   "misc": {
     "noPublicRooms": "There are no public rooms",
     "roomClosed": "Room closed by host"

@@ -14,6 +14,25 @@
     "gameStarted": "Spiel ist bereits gestartet",
     "noRoomCode": "Du musst ein Raumcode eingeben oder ein Raum erstellen"
   },
+  "playerPage": {
+    "kickEveryoneButton": "Raum schließen",
+    "leaveButton": "Spiel verlassen",
+    "startButton": "Spiel starten",
+    "addBotButton": "Bot hinzufügen",
+    "removeBotButton": "Bot entfernen",
+    "heartCount": "Herzenanzahl",
+    "allowGhostMode": "Ghost Mode erlauben",
+    "visibility": "Öffentlicher Raum",
+    "waitForPlayer": "Warte auf Spieler...",
+    "heartErrorNaN": "Der Wert für die Herzenanzahl ist ungültig.",
+    "heartErrorWrongNumber": "Der Wert für die Herzenanzahl darf nicht kleiner als '1' sein.",
+    "heartErrorEmpty": "Das Textfeld für die Herzenanzahl darf nicht leer sein.",
+    "needMorePlayers": "Du brauchst mindestens 2 Spieler.",
+    "joinLink": "Link anzeigen"
+  },
+  "jwc": {
+    "joinButton": "Spiel beitreten"
+  },
   "misc": {
     "noPublicRooms": "Es gibt keine öffentliche Räume",
     "roomClosed": "Der Raum wurde vom Host geschlossen"
