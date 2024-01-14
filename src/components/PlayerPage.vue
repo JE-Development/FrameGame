@@ -3,10 +3,7 @@
   <div class="center-horizontal" v-if="isHost">
     <div class="center-horizontal">
       <div class="absolute">
-        <h2 class="link-background pointer center-horizontal" v-if="linkVisible" @click="linkVisible = !linkVisible">{{baseURI}}/code/{{getCookies("rc")}}</h2>
-      </div>
-      <div class="absolute">
-        <h2 class="link-background pointer center-horizontal" v-if="!linkVisible" @click="linkVisible = !linkVisible">{{lang.playerPage.joinLink}}</h2>
+        <h2 class="link-background center-horizontal">{{baseURI}}/code/{{getCookies("rc")}}</h2>
       </div>
       <div style="height: 60px"></div>
     </div>
@@ -63,7 +60,6 @@ export default {
             names: [],
             isHost: false,
             socket: null,
-          linkVisible: false,
           baseURI: "",
           pb: [],
           errorText: "",
@@ -156,29 +152,16 @@ export default {
     methods: {
 
       startGame(){
-        window.open(document.baseURI.split("/#/")[0] + "/#/game", '_self');
+        this.$router.push('/game');
       },
 
       onClickStart(){
-        if(this.names.length > 1){
-          if(this.$refs.input.value !== ""){
-            let checker = Number(this.$refs.input.value)
-            if(isNaN(checker)){
-              this.errorText = this.lang.playerPage.heartErrorNaN
-            }else if(checker < 1){
-              this.errorText = this.lang.playerPage.heartErrorWrongNumber
-            }else{
-              window.open(document.baseURI.split("/#/")[0] + "/#/game", '_self');
-              let dat = {
-                type: "engine",
-                func: "start",
-                args: [this.$refs.input.value, this.$refs.isghost.checked]
-              }
-              this.send(dat);
-            }
-          }else{
-            this.errorText = this.lang.playerPage.heartErrorEmpty
+        if(this.names.length > 0){
+          let dat = {
+            type: "engine",
+            func: "start",
           }
+          this.send(dat);
         }else{
           this.errorText = this.lang.playerPage.needMorePlayers
         }

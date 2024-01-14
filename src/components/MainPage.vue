@@ -53,7 +53,7 @@ import LangSelection from "@/components/views/LangSelection.vue";
 import UIButton from "@/components/views/UIButton.vue";
 
 export default {
-    name: "Register",
+    name: "MainPage",
   components: {UIButton, LangSelection, ProfilePopup},
     data() {
         return {

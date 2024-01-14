@@ -9,10 +9,10 @@ export class HttpRequest{
         let json;
 
         await axios.get(url)
-            .then(response => {
+            .then((response: any) => {
                 json = response.data;
             })
-            .catch(error => {
+            .catch((error: any) => {
                 console.log(error)
             });
         if(ok) {

@@ -30,11 +30,27 @@
     "needMorePlayers": "You need at least 2 players.",
     "joinLink": "show URL"
   },
+  "game": {
+    "createPromptPlaceholder": "Write something creative",
+    "imageSearchPlaceholder": "Image Search",
+    "addTextPlaceholder": "Enter text",
+    "searchButton": "Search",
+    "addButton": "Add",
+    "finishedPromptButton": "Finish",
+    "searchImagesButton": "Search for images",
+    "addTextButton": "Add text",
+    "transformWidth": "Width",
+    "transformHeight": "Height",
+    "transformSize": "Size",
+    "transformRotation": "Rotation"
+  },
   "jwc": {
     "joinButton": "Join Game"
   },
   "misc": {
     "noPublicRooms": "There are no public rooms",
-    "roomClosed": "Room closed by host"
+    "roomClosed": "Room closed by host",
+    "closeButton": "Close",
+    "searchLangInfo": "The search term has to be in english"
   }
 }

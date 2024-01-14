@@ -60,8 +60,46 @@
     padding-left: 10px;
 }
 
+.canvas{
+    width: 800px;
+    height: 600px;
+    background: #ffffff;
+}
+
+.prompt-input{
+    width: 90vw;
+    max-width: 730px;
+    height: 30px;
+    font-size: 20px;
+    border: solid;
+    border-radius: 10px;
+    border-color: transparent;
+    padding-left: 10px;
+}
+
+.google-search-input{
+    width: 90vw;
+    max-width: 400px;
+    height: 30px;
+    font-size: 20px;
+    border: solid;
+    border-radius: 10px;
+    border-color: transparent;
+    padding-left: 10px;
+}
+
+.search-image{
+    max-width: 400px;
+    max-height: 400px;
+    background: transparent;
+}
+
 .profile-picture{
     width: 50px;
+}
+
+.slider{
+    width: 200px;
 }
 
 .player-card{
