@@ -1,0 +1,52 @@
+.layer-size{
+    width: 250px;
+    height: 600px;
+}
+
+.layer-background{
+    background: #dcdcdc;
+}
+
+.layer-element-base{
+    width: 250px;
+    height: 100px;
+    background: #c0c0c0;
+}
+
+.layer-element-margin{
+    margin-bottom: 10px;
+}
+
+.layer-button{
+    display: flex;
+    width: 35px;
+    height: 35px;
+    margin: 2px;
+
+    border: 3px solid transparent;
+
+    cursor: pointer;
+    border-radius: 100px;
+
+    font-size: 25px;
+}
+
+.layer-image-size{
+    width: 150px;
+}
+
+.layer-arrow-image{
+    width: 25px;
+    object-fit: contain;
+}
+
+.layer-trash-image{
+    width: 22px;
+    object-fit: contain;
+}
+
+.layer-thumb{
+    width: 150px;
+    height: 100px;
+    object-fit: contain;
+}

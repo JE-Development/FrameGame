@@ -17,11 +17,12 @@
     "konva": "^9.3.0",
     "vue": "^3.3.11",
     "vue-cookies": "^1.8.3",
+    "vue-draggable-next": "^2.2.1",
     "vue-konva": "^3.0.2",
     "vue-router": "^4.2.5",
     "vue-slider-component": "^4.1.0-beta.7",
-    "vue3-notification": "^0.0.3",
-    "vuedraggable": "^2.24.3"
+    "vue3-form-render-vuedraggable": "^4.0.1-beta.1",
+    "vue3-notification": "^0.0.3"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",

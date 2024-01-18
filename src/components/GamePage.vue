@@ -32,7 +32,9 @@
       </div>
     </div>
     <div style="height: 20px"></div>
-    <div class="center-horizontal">
+    <div class="center-horizontal" v-if="canvasRender">
+      <LayerEditor :sampler="true" :layers="addedImages"/>
+      <div style="width: 200px"></div>
       <div class="canvas" v-if="reloadCanvas">
         <v-stage :config="stageConfig" @mousedown="handleMouseDown" @mousemove="handleMouseMove" @mouseup="handleMouseUp" ref="stage">
           <v-layer>
@@ -60,6 +62,8 @@
           </v-layer>
         </v-stage>
       </div>
+      <div style="width: 200px"></div>
+      <LayerEditor :sampler="false" @up="onUp" @down="onDown" :layers="addedImages" v-if="layerRender"/>
     </div>
     <div style="height: 20px"></div>
     <div class="center-horizontal" v-if="selectedImageIndex !== -1 || selectedTextIndex !== -1">
@@ -146,9 +150,12 @@ import UIButton from "@/components/views/UIButton.vue";
 import ImageSearchPopup from "@/components/views/ImageSearchPopup.vue";
 import {nextTick} from "vue";
 import AddTextPopup from "@/components/views/AddTextPopup.vue";
+import LayerEditor from "@/components/views/LayerEditor.vue";
+
+
 export default {
     name: "GamePage",
-  components: {AddTextPopup, ImageSearchPopup, UIButton},
+  components: {LayerEditor, AddTextPopup, ImageSearchPopup, UIButton},
     data() {
         return {
           lang: langEN,
@@ -159,13 +166,11 @@ export default {
             width: 800,
             height: 600,
           },
-          //addedImages: ["https://www.bhg.com/thmb/H9VV9JNnKl-H1faFXnPlQfNprYw=/1799x0/filters:no_upscale():strip_icc()/white-modern-house-curved-patio-archway-c0a4a3b3-aa51b24d14d0464ea15d36e05aa85ac9.jpg", "https://image.capital.de/33433586/t/8s/v1/w1440/r1.3333/-/tiny-house-manufaktur.jpg"],
           addedImages: [],
           reloadCanvas: true,
           loadedImages: [],
           imageTransform: [],
           textTransform: [],
-          imageSize: [],
           selectedImageIndex: -1,
           selectedTextIndex: -1,
           sliderMaxw: 200,
@@ -185,7 +190,9 @@ export default {
           showTextPopup: false,
           textList: [],
           supportText: true,
-          einmal: true
+          einmal: true,
+          layerRender: true,
+          canvasRender: true
         };
     },
 
@@ -283,6 +290,8 @@ export default {
         this.showISP = true
       },
 
+
+
       imageConfig(index) {
         if(this.imageTransform[index] === undefined){
           this.imageTransform[index] = {
@@ -339,24 +348,35 @@ export default {
         });
       },
 
+      onUp(index){
+        if(index !== this.addedImages.length-1){
+          let ui = index++
+          this.changeIndex(index, ui)
+        }
+      },
+
+      onDown(index){
+        if(index !== 0){
+          let oi = index--
+          this.changeIndex(index, oi)
+        }
+      },
+
       imageClicked(img){
         this.addedImages.push(img)
+        this.selectedImageIndex = this.addedImages.length -1
         this.showISP = false
         this.reloadCanvas = false
         nextTick().then(() =>{
           this.reloadCanvas = true
         })
         this.loadImages()
-      },
+        this.onSetDefault()
 
-      onClickTransform(){
-        this.imageTransform[this.selectedImageIndex].width += 50
-        this.imageTransform[this.selectedImageIndex].height += 50
-        this.reloadCanvas = false
-        nextTick().then(() =>{
-          this.reloadCanvas = true
+        this.layerRender = false
+        nextTick(() => {
+          this.layerRender = true
         })
-        this.loadImages()
       },
 
       onImage(index){
@@ -374,16 +394,17 @@ export default {
       },
 
       dragStart(){
-
+        this.onSetDefault()
       },
 
       onSetDefault(){
         if(this.supportText){
-          this.valW = this.imageTransform[this.selectedImageIndex].width
-          this.valH = this.imageTransform[this.selectedImageIndex].height
-          this.valR = this.imageTransform[this.selectedImageIndex].rotation
+          this.valW = this.imageTransform[this.selectedImageIndex] === undefined ? 200 : this.imageTransform[this.selectedImageIndex].width
+          this.valH = this.imageTransform[this.selectedImageIndex] === undefined ? 200 : this.imageTransform[this.selectedImageIndex].height
+          this.valR = this.imageTransform[this.selectedImageIndex] === undefined ? 200 : this.imageTransform[this.selectedImageIndex].rotation
+        }else{
+          this.valT = this.textList[this.selectedTextIndex] === undefined ? 200 : this.textList[this.selectedTextIndex].fontSize
         }
-        this.valT = this.textList[this.selectedTextIndex].fontSize
       },
 
       dragEnd(){
@@ -443,7 +464,7 @@ export default {
             }
           }else{
             if(this.textList[this.selectedTextIndex] !== undefined){
-              let val = value - (this.sliderMaxw / 2)
+              let val = value - (this.sliderMaxs / 2)
               this.textList[this.selectedTextIndex].fontSize = val + this.valT
               this.reloadCanvas = false
               nextTick().then(() =>{
@@ -479,16 +500,52 @@ export default {
           fontSize: this.valT
         }
         this.textList.push(dat)
+        this.selectedTextIndex = this.addedImages.length -1
         this.reloadCanvas = false
         nextTick().then(() =>{
           this.reloadCanvas = true
         })
         this.loadImages()
         this.closeText()
+        this.onSetDefault()
+
+        this.layerRender = false
+        nextTick(() => {
+          this.layerRender = true
+        })
       },
 
       onTextClicked(){
         this.showTextPopup = true
+      },
+
+
+      changeIndex(indexA, indexB) {
+        this.addedImages = this.indexCustomChange(this.addedImages, indexA, indexB)
+        this.loadedImages = this.indexCustomChange(this.loadedImages, indexA, indexB)
+        this.imageTransform = this.indexCustomChange(this.imageTransform, indexA, indexB)
+
+        this.canvasRender = false
+        nextTick(() => {
+          this.canvasRender = true
+        })
+
+        this.layerRender = false
+        nextTick(() => {
+          this.layerRender = true
+        })
+      },
+
+      indexCustomChange(array1, indexA, indexB) {
+        let array = array1
+        if (indexA < 0 || indexA >= array.length || indexB < 0 || indexB >= array.length) {
+          console.log("invalid index")
+          return;
+        }
+        let temp = array[indexA];
+        array[indexA] = array[indexB];
+        array[indexB] = temp;
+        return array
       },
 
 
@@ -511,3 +568,16 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.image-container {
+  display: inline-block;
+  margin: 10px;
+}
+
+.dragged-image {
+  width: 150px;
+  height: auto;
+  border: 1px solid #ddd;
+}
+</style>
