@@ -7,6 +7,7 @@
           :img="dat.img"
           @up="onUp(dat.index)"
           @down="onDown(dat.index)"
+          @delete="onDelete(dat.index)"
       />
     </div>
   </div>
@@ -60,6 +61,10 @@ export default {
       onDown(index){
         this.$emit("down", index)
       },
+
+    onDelete(index){
+      this.$emit("delete", index)
+    },
 
 
         getCookies(key){

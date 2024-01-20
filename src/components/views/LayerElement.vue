@@ -22,7 +22,7 @@
           </div>
           <div class="parent-height center-vertical">
             <div>
-              <button class="layer-button center-horizontal" @click="onUp">
+              <button class="layer-button center-horizontal" @click="onDelete">
                 <img src="../../assets/trash.png" class="layer-trash-image">
               </button>
             </div>
@@ -63,6 +63,10 @@ export default {
 
       onDown(){
         this.$emit("down")
+      },
+
+      onDelete(){
+        this.$emit("delete")
       },
 
 

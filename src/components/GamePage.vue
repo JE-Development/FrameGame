@@ -63,7 +63,7 @@
         </v-stage>
       </div>
       <div style="width: 200px"></div>
-      <LayerEditor :sampler="false" @up="onUp" @down="onDown" :layers="addedImages" v-if="layerRender"/>
+      <LayerEditor :sampler="false" @up="onUp" @down="onDown" @delete="onDelete" :layers="addedImages" v-if="layerRender"/>
     </div>
     <div style="height: 20px"></div>
     <div class="center-horizontal" v-if="selectedImageIndex !== -1 || selectedTextIndex !== -1">
@@ -116,6 +116,12 @@
             @change="dragChanges"
             tooltip="none"
             :process-style="{ backgroundColor: '#00ff00' }"></vue-slider>
+        <div style="height: 10px"></div>
+        <div class="center-horizontal">
+          <button class="layer-button center-horizontal" @click="onTextDelete" v-if="!supportText">
+            <img src="../assets/trash.png" class="layer-trash-image">
+          </button>
+        </div>
       </div>
       <div style="width: 20px"></div>
       <div class="slider" v-if="supportText">
@@ -273,10 +279,12 @@ export default {
           this.einmal = false
           this.listening = false
           nextTick(() => {
-            this.$refs.sliderw.setValue(this.sliderMaxw/2)
-            this.$refs.sliderh.setValue(this.sliderMaxh/2)
+            if(this.supportText){
+              this.$refs.sliderw.setValue(this.sliderMaxw/2)
+              this.$refs.sliderh.setValue(this.sliderMaxh/2)
+              this.$refs.sliderr.setValue(this.sliderMaxr/2)
+            }
             this.$refs.sliders.setValue(this.sliderMaxs/2)
-            this.$refs.sliderr.setValue(this.sliderMaxr/2)
             this.listening = true
           })
         }
@@ -360,6 +368,49 @@ export default {
           let oi = index--
           this.changeIndex(index, oi)
         }
+      },
+
+      onDelete(index){
+        this.addedImages = this.deleteIndex(this.addedImages, index)
+        this.loadedImages = this.deleteIndex(this.loadedImages, index)
+        this.imageTransform = this.deleteIndex(this.imageTransform, index)
+
+        this.canvasRender = false
+        nextTick(() => {
+          this.canvasRender = true
+        })
+
+        this.layerRender = false
+        nextTick(() => {
+          this.layerRender = true
+        })
+      },
+
+      onTextDelete(){
+        let index = this.selectedTextIndex
+        this.textList = this.deleteIndex(this.textList, index)
+        this.textTransform = this.deleteIndex(this.textTransform, index)
+
+        this.canvasRender = false
+        nextTick(() => {
+          this.canvasRender = true
+        })
+
+        this.layerRender = false
+        nextTick(() => {
+          this.layerRender = true
+        })
+      },
+
+
+      deleteIndex(array, index){
+        let updated = []
+        for(let i = 0; i < array.length; i++){
+          if(i !== index){
+            updated.push(array[i])
+          }
+        }
+        return updated
       },
 
       imageClicked(img){
