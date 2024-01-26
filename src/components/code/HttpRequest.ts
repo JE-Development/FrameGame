@@ -53,26 +53,22 @@ export class HttpRequest{
         let formData = new FormData()
         formData.append(key, value)
 
-        let response = await axios.post(url, formData, {
+        axios.post(url, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
+        }).then(response => {
+            // Konvertiere die Antwort in eine Base64-codierte URL
+            const imageBase64 = btoa(
+                new Uint8Array(response.data).reduce(
+                    (data, byte) => data + String.fromCharCode(byte),
+                    ''
+                )
+            );
+            // Setze die URL als src für das Bild
+            let imageUrl = `data:image/png;base64,${imageBase64}`;
+            console.log(imageBase64)
         })
-
-        if (response.status === 200) {
-            // Die Antwort könnte die bearbeitete Bilddaten-URL enthalten (ersetze 'BEARBEITETE_BILD_URL' durch den tatsächlichen Schlüssel in deiner Antwort)
-            const bearbeitetesBildURL = response.data.BEARBEITETE_BILD_URL;
-
-            // Hier kannst du das bearbeitete Bild verwenden oder die URL speichern
-            console.log('Bearbeitetes Bild URL:', bearbeitetesBildURL);
-
-            // Gib die bearbeitete Bilddaten-URL zurück
-            return bearbeitetesBildURL;
-        } else {
-            console.error('Unerwarteter Statuscode:', response.status);
-            // Gib einen Fehler zurück (du kannst dies anpassen)
-            return 'error';
-        }
 
     }
 }

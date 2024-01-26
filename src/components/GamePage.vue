@@ -30,10 +30,7 @@
     </div>
     <div v-if="!selfReady">
       <div class="center-horizontal">
-        <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinish" color="line1"/>
-      </div>
-      <div class="center-horizontal">
-        <UIButton :title="'bg removal'" @click="getImageAsBase64" color="line2"/>
+        <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinishImage" color="line1"/>
       </div>
       <div style="height: 20px"></div>
       <div class="center-horizontal">
@@ -133,7 +130,7 @@
             :process-style="{ backgroundColor: '#00ff00' }"></vue-slider>
         <div style="height: 10px"></div>
         <div class="center-horizontal">
-          <button class="layer-button center-horizontal" @click="onTextDelete" v-if="!nsupportText">
+          <button class="layer-button center-horizontal" @click="onTextDelete" v-if="!supportText">
             <img src="../assets/trash.png" class="layer-trash-image">
           </button>
         </div>
@@ -283,6 +280,17 @@ export default {
             http.httpRequestPost("http://jasonbackend.de:8000/upload", "image", b64).then((json) => {
               console.log(json)
             })
+          }else if(message.func === "createImage"){
+            this.canvasRender = false
+            let canvas = message.canvas
+            this.addedImages = canvas.images
+            this.imageTransform = canvas.imageTransform
+            this.textList = canvas.text
+            this.textTransform = canvas.textTransform
+            nextTick(() => {
+              this.canvasRender = true
+              this.loadImages()
+            })
           }
         });
 
@@ -296,6 +304,21 @@ export default {
           type: "engine",
           func: "readyPrompt",
           args: [this.$refs.prompt, this.getCookies("username")]
+        }
+        this.send(dat)
+      },
+
+      onClickFinishImage(){
+        this.selfReady = true
+        let dat = {
+          type: "engine",
+          func: "imageFinished",
+          args: [this.getCookies("username"), {
+            images: this.addedImages,
+            imageTransform: this.imageTransform,
+            text: this.textList,
+            textTransform: this.textTransform
+          }]
         }
         this.send(dat)
       },
