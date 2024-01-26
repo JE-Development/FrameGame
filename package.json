@@ -22,7 +22,8 @@
     "vue-router": "^4.2.5",
     "vue-slider-component": "^4.1.0-beta.7",
     "vue3-form-render-vuedraggable": "^4.0.1-beta.1",
-    "vue3-notification": "^0.0.3"
+    "vue3-notification": "^0.0.3",
+    "vueprogressionbar": "^0.1.3"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",

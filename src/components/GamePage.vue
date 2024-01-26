@@ -23,12 +23,27 @@
 
   <div v-if="mode === 1">
     <div class="center-horizontal">
-      <div class="center-horizontal">
-        <UIButton :title="lang.game.searchImagesButton" @click="onClickSearch" color="prim-color-background"/>
+      <div :style="'width: ' + 100*progressMultiply + 'px; height: 10px'">
+        <div :style="'width: ' + 100 * progressMultiply + 'px; height: 10px; background: #eeeeee'" class="absolute"></div>
+        <div :style="'width: ' + progress * progressMultiply + 'px; height: 10px; background: #42b983'" class="absolute"></div>
       </div>
-      <div style="width: 20px"></div>
+    </div>
+    <div v-if="!selfReady">
       <div class="center-horizontal">
-        <UIButton :title="lang.game.addTextButton" @click="onTextClicked" color="prim-color-background"/>
+        <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinish" color="line1"/>
+      </div>
+      <div class="center-horizontal">
+        <UIButton :title="'bg removal'" @click="getImageAsBase64" color="line2"/>
+      </div>
+      <div style="height: 20px"></div>
+      <div class="center-horizontal">
+        <div class="center-horizontal">
+          <UIButton :title="lang.game.searchImagesButton" @click="onClickSearch" color="prim-color-background"/>
+        </div>
+        <div style="width: 20px"></div>
+        <div class="center-horizontal">
+          <UIButton :title="lang.game.addTextButton" @click="onTextClicked" color="prim-color-background"/>
+        </div>
       </div>
     </div>
     <div style="height: 20px"></div>
@@ -118,7 +133,7 @@
             :process-style="{ backgroundColor: '#00ff00' }"></vue-slider>
         <div style="height: 10px"></div>
         <div class="center-horizontal">
-          <button class="layer-button center-horizontal" @click="onTextDelete" v-if="!supportText">
+          <button class="layer-button center-horizontal" @click="onTextDelete" v-if="!nsupportText">
             <img src="../assets/trash.png" class="layer-trash-image">
           </button>
         </div>
@@ -157,6 +172,7 @@ import ImageSearchPopup from "@/components/views/ImageSearchPopup.vue";
 import {nextTick} from "vue";
 import AddTextPopup from "@/components/views/AddTextPopup.vue";
 import LayerEditor from "@/components/views/LayerEditor.vue";
+import {HttpRequest} from "@/components/code/HttpRequest";
 
 
 export default {
@@ -198,7 +214,10 @@ export default {
           supportText: true,
           einmal: true,
           layerRender: true,
-          canvasRender: true
+          canvasRender: true,
+          progressMultiply: 5,
+          progress: 0,
+          progressTime: 1000
         };
     },
 
@@ -215,6 +234,7 @@ export default {
     },
 
     mounted() {
+      this.increaseProgress()
 
       //this.loadImage(this.image, this.imageConfig);
       this.loadImages()
@@ -257,6 +277,12 @@ export default {
             console.error(message.text)
           }else if(message.func === "ready"){
             this.mode = 1
+          }else if(message.func === "base64"){
+            let b64 = message.base
+            let http = new HttpRequest()
+            http.httpRequestPost("http://jasonbackend.de:8000/upload", "image", b64).then((json) => {
+              console.log(json)
+            })
           }
         });
 
@@ -326,6 +352,18 @@ export default {
             };
           },
         };
+      },
+
+      increaseProgress(){
+        if(this.progress < 100){
+          this.progress++
+          setTimeout(() => {
+            this.increaseProgress()
+          }, this.progressTime
+          )
+        }else{
+          this.selfReady = true
+        }
       },
 
 
@@ -541,6 +579,49 @@ export default {
         }
       },
 
+      getImageAsBase64() {
+
+        let data = {
+          type: "util",
+          func: "imageToBase64",
+          args: [this.addedImages[this.selectedImageIndex]]
+        }
+        this.send(data)
+
+        /*
+        const imageUrl = this.loadedImages[this.selectedImageIndex]
+
+        this.imageToBase64(imageUrl)
+            .then((base64) => {
+              let http = new HttpRequest()
+              let b64 = String(base64).split(",")[1]
+              console.log(b64)
+              http.httpRequestPost("http://jasonbackend.de:8000/upload", "image", b64)
+            })
+            .catch((error) => {
+              console.error('Error loading image:', error);
+            });*/
+      },
+
+      imageToBase64(url) {
+        return new Promise((resolve, reject) => {
+          // Lade das Bild in einen Blob
+          const xhr = new XMLHttpRequest();
+          xhr.onload = function () {
+            const reader = new FileReader();
+            reader.onloadend = function () {
+              resolve(reader.result);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(xhr.response);
+          };
+          xhr.onerror = reject;
+          xhr.responseType = 'blob';
+          xhr.open('GET', url);
+          xhr.send();
+        });
+      },
+
       closeText(){
         this.showTextPopup = false
       },
@@ -630,5 +711,27 @@ export default {
   width: 150px;
   height: auto;
   border: 1px solid #ddd;
+}
+
+.progress-bar-container{
+  width: 100%;
+  position: fixed;
+}
+.progress-bar{
+  height: 100%;
+  background-color: #76ceff;
+  transition: 0.1s ease;
+}
+.progress-bar--small{
+  height: 5px;
+}
+.progress-bar--medium{
+  height: 7px;
+}
+.progress-bar--big{
+  height: 10px;
+}
+.progress-bar--rounded{
+  border-radius: 5px;
 }
 </style>

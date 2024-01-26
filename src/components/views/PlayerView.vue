@@ -4,10 +4,6 @@
     <div>
       <div class="center-horizontal">
         <div>
-          <div class="center-horizontal">
-            <img src="../../assets/crown.png" class="crown" v-if="winner" style="z-index: 100"/>
-            <div style="height: 20px" v-else></div>
-          </div>
           <div>
             <img :src="pb" class="pb absolute" style="width: 50px" v-if="!isSad"/>
             <img :src="pbSad" class="pb" style="width: 50px"/>
@@ -22,12 +18,7 @@
             <h3 v-else-if="turn" class="green">{{name}}</h3>
             <h3 v-else>{{name}}</h3>
         </div>
-      <div class="center-horizontal">
-        <img
-            v-for="(dat) in heartlenght"
-            src="../../assets/heart_texture.png" style="width: 30px; margin: 5px">
-      </div>
-        <h1 class="orange">{{dice}}</h1>
+      <h1 class="orange">{{dice}}</h1>
     </div>
 </div>
 
