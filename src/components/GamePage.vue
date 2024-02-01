@@ -28,6 +28,9 @@
         <div :style="'width: ' + progress * progressMultiply + 'px; height: 10px; background: #42b983'" class="absolute"></div>
       </div>
     </div>
+    <div class="center-horizontal">
+      <div class="to-draw-text round-corner">{{drawText}}</div>
+    </div>
     <div v-if="!selfReady">
       <div class="center-horizontal">
         <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinishImage" color="line1"/>
@@ -155,6 +158,54 @@
     </div>
   </div>
 
+  <div v-if="mode === 2">
+    <div class="center-horizontal" v-if="canvasRender">
+      <div class="canvas" v-if="reloadCanvas">
+        <v-stage :config="stageConfig" @mousedown="handleMouseDown" @mousemove="handleMouseMove" @mouseup="handleMouseUp" ref="stage">
+          <v-layer>
+            <v-image v-for="(imageUrl, index) in loadedImages" :key="index" :image="imageUrl" :config="imageConfigForView(index)" v-model="imageTransform[index]" @click="onImage(index)"/>
+            <v-text
+                v-for="(text, index) in textList"
+                :config="{
+            text: text.text,
+            x: this.textTransform[index] === undefined ? 50 : this.textTransform[index].x,
+          y: this.textTransform[index] === undefined ? 50 : this.textTransform[index].y,
+            draggable: false,
+            fill: 'black',
+            fontSize: text.fontSize,
+            onDragMove: (event) => {
+              this.onText(index)
+            this.textTransform[index] = {
+              x: event.target.x(),
+              y: event.target.y(),
+            };
+          },
+          }"
+                @click="onText(index)"
+                v-model="textTransform[index]"
+            />
+          </v-layer>
+        </v-stage>
+      </div>
+    </div>
+    <div class="center-horizontal">
+      <div>
+        <div style="height: 20px"></div>
+        <input
+            ref="promptRating"
+            :placeholder="lang.game.createPromptPlaceholder"
+            class="prompt-input shadow texture"/>
+        <div style="height: 20px"></div>
+        <div class="center-horizontal" v-if="!selfReady">
+          <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinishRating" color="prim-color-background"/>
+        </div>
+        <div class="center-horizontal" v-else>
+          <h2>Warte bis alle Spieler bereit sind</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </template>
 
 
@@ -178,7 +229,7 @@ export default {
     data() {
         return {
           lang: langEN,
-          mode: 1,
+          mode: 0,
           selfReady: false,
           showISP: false,
           stageConfig: {
@@ -214,7 +265,8 @@ export default {
           canvasRender: true,
           progressMultiply: 5,
           progress: 0,
-          progressTime: 1000
+          progressTime: 1000,
+          drawText: ""
         };
     },
 
@@ -274,23 +326,34 @@ export default {
             console.error(message.text)
           }else if(message.func === "ready"){
             this.mode = 1
+            this.selfReady = false
+          }else if(message.func === "readyImage"){
+            this.mode = 2
+            this.selfReady = false
           }else if(message.func === "base64"){
             let b64 = message.base
             let http = new HttpRequest()
             http.httpRequestPost("http://jasonbackend.de:8000/upload", "image", b64).then((json) => {
               console.log(json)
             })
-          }else if(message.func === "createImage"){
-            this.canvasRender = false
-            let canvas = message.canvas
-            this.addedImages = canvas.images
-            this.imageTransform = canvas.imageTransform
-            this.textList = canvas.text
-            this.textTransform = canvas.textTransform
-            nextTick(() => {
-              this.canvasRender = true
-              this.loadImages()
-            })
+          }else if(message.func === "dataForPrompt"){
+            if(message.player === this.getCookies("username")){
+              this.selfReady = false
+              this.canvasRender = false
+              let canvas = message.playerData
+              this.addedImages = canvas.images
+              this.imageTransform = canvas.imageTransform
+              this.textList = canvas.text
+              this.textTransform = canvas.textTransform
+              nextTick(() => {
+                this.canvasRender = true
+                this.loadImages()
+              })
+            }
+          }else if(message.func === "dataForImage"){
+            if(message.toPlayer === this.getCookies("username")){
+              this.drawText = message.playerData
+            }
           }
         });
 
@@ -303,7 +366,17 @@ export default {
         let dat = {
           type: "engine",
           func: "readyPrompt",
-          args: [this.$refs.prompt, this.getCookies("username")]
+          args: [this.$refs.prompt.value, this.getCookies("username")]
+        }
+        this.send(dat)
+      },
+
+      onClickFinishRating(){
+        this.selfReady = true
+        let dat = {
+          type: "engine",
+          func: "readyPrompt",
+          args: [this.$refs.promptRating.value, this.getCookies("username")]
         }
         this.send(dat)
       },
@@ -312,7 +385,7 @@ export default {
         this.selfReady = true
         let dat = {
           type: "engine",
-          func: "imageFinished",
+          func: "readyImage",
           args: [this.getCookies("username"), {
             images: this.addedImages,
             imageTransform: this.imageTransform,
@@ -364,6 +437,34 @@ export default {
           height: this.imageTransform[index].height,
           rotation: this.imageTransform[index].rotation,
           draggable: true,
+          onDragMove: (event) => {
+            this.onImage(index)
+            this.imageTransform[index] = {
+              x: event.target.x(),
+              y: event.target.y(),
+              width: this.imageTransform[index].width,
+              height: this.imageTransform[index].height,
+              rotation: this.imageTransform[index].rotation
+            };
+          },
+        };
+      },
+
+      imageConfigForView(index) {
+        if(this.imageTransform[index] === undefined){
+          this.imageTransform[index] = {
+            width: 200,
+            height: 200,
+            rotation: 0,
+          };
+        }
+        return {
+          x: this.imageTransform[index] === undefined ? 100 : this.imageTransform[index].x,
+          y: this.imageTransform[index] === undefined ? 100 : this.imageTransform[index].y,
+          width: this.imageTransform[index].width,
+          height: this.imageTransform[index].height,
+          rotation: this.imageTransform[index].rotation,
+          draggable: false,
           onDragMove: (event) => {
             this.onImage(index)
             this.imageTransform[index] = {
