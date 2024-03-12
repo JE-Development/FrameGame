@@ -337,7 +337,7 @@ export default {
               console.log(json)
             })
           }else if(message.func === "dataForPrompt"){
-            if(message.player === this.getCookies("username")){
+            if(message.toPlayer === this.getCookies("username")){
               this.selfReady = false
               this.canvasRender = false
               let canvas = message.playerData
@@ -345,6 +345,10 @@ export default {
               this.imageTransform = canvas.imageTransform
               this.textList = canvas.text
               this.textTransform = canvas.textTransform
+              this.loadedImages = []
+              for(let i = 0; i < this.addedImages.length; i++){
+                this.loadedImages.push(null)
+              }
               nextTick(() => {
                 this.canvasRender = true
                 this.loadImages()
