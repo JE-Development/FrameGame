@@ -205,6 +205,9 @@
       </div>
     </div>
   </div>
+  <div v-if="mode === 3">
+    <h1>In Finished</h1>
+  </div>
 
 </template>
 
@@ -329,6 +332,9 @@ export default {
             this.selfReady = false
           }else if(message.func === "readyImage"){
             this.mode = 2
+            this.selfReady = false
+          }else if(message.func === "finished"){
+            this.mode = 3
             this.selfReady = false
           }else if(message.func === "base64"){
             let b64 = message.base
