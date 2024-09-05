@@ -37,6 +37,10 @@ body{
     width: 100%;
 }
 
+.max-height{
+    height: 100%;
+}
+
 .parent-size{
     width: 100%;
     height: 100%;
@@ -60,6 +64,10 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.text-center{
+    text-align: center;
 }
 
 .left{
@@ -102,7 +110,7 @@ body{
 
 .scroll{
     max-height: 70vh;
-    overflow: scroll;
+    overflow-y: scroll;
     padding-bottom: 10px;
 }
 

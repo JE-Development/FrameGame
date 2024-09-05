@@ -74,6 +74,12 @@
     background: #ffffff;
 }
 
+.reveal-canvas{
+    width: 800px;
+    height: 600px;
+    background: #ffffff;
+}
+
 .prompt-input{
     width: 90vw;
     max-width: 730px;
@@ -215,7 +221,7 @@
 }
 
 .white-background{
-    background: #b7b7b7;
+    background: #ffffff;
 }
 
 .dice-image{
