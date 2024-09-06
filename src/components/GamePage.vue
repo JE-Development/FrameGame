@@ -126,7 +126,7 @@
   <div v-if="mode === 2">
     <div class="center-horizontal" v-if="canvasRender">
       <div class="canvas" v-if="reloadCanvas">
-        <CanvasView :stageConfig="stageConfig" :loadedImages="loadedImages" :imageConfig="imageConfigForView(index)"
+        <CanvasView :stageConfig="stageConfig" :loadedImages="loadedImages" :imageConfig="imageConfigForView(imageTransform)"
           :textList="textList" :textTransform="textTransform" />
       </div>
     </div>
@@ -149,17 +149,16 @@
   <div v-if="mode === 3">
     <div class="center-horizontal">
       <div>
-        <PlayerLine name="Jason" :selected="false" />
-        <PlayerLine name="Jason" :selected="false" />
-        <PlayerLine name="Jason" :selected="false" />
-        <PlayerLine name="Jason" :selected="false" />
+        <PlayerLine v-for="dat in revealLine" :name="dat" :selected="dat === this.currentRevealPlayer" />
       </div>
-      <div class="scroll" v-if="canvasRender">
-        <div class="reveal-canvas" v-for="dat in revealData">
-          <CanvasView :stageConfig="stageConfig" :loadedImages="loadedRevealImage" :imageConfig="imageConfigForView(index)"
-            :textList="dat.image.textList" :textTransform="dat.image.textTransform" :prompt="dat.prompt" :loadedIndex="dat.id"/>
+      <div class="scroll" ref="scroll">
+        <div v-for="(dat, index) in revealData" v-if="canvasRender">
+
+          <CanvasView :stageConfig="stageConfig" :loadedImages="dat.loadedImages"
+            :imageConfig="imageConfigForReveal(dat)" :textList="dat.image?.text"
+            :textTransform="dat.image?.textTransform" :prompt="dat.prompt" />
         </div>
-        
+
       </div>
     </div>
   </div>
@@ -189,7 +188,7 @@ export default {
   data() {
     return {
       lang: langEN,
-      mode: 3,
+      mode: 0,
       selfReady: false,
       showISP: false,
       stageConfig: {
@@ -228,7 +227,9 @@ export default {
       progressTime: 1000,
       drawText: "",
       revealData: [],
-      loadedRevealImage: []
+      loadedRevealImage: [],
+      revealLine: [],
+      currentRevealPlayer: []
     };
   },
 
@@ -246,9 +247,16 @@ export default {
 
   mounted() {
 
+    /*
+      [ 'Jason', 'Marcel', 'Enns' ],
+      [ 'Marcel', 'Enns', 'Jason' ],
+      [ 'Enns', 'Jason', 'Marcel' ]
+    */
+
 
     this.increaseProgress()
-    this.setRevealContent()
+
+    //this.setRevealContent()
 
     //this.loadImage(this.image, this.imageConfig);
     this.loadImages()
@@ -296,7 +304,7 @@ export default {
         this.mode = 2
         this.selfReady = false
       } else if (message.func === "finished") {
-        
+        this.revealLine = message.line
         this.setRevealContent(message)
 
       } else if (message.func === "base64") {
@@ -326,6 +334,12 @@ export default {
       } else if (message.func === "dataForImage") {
         if (message.toPlayer === this.getCookies("username")) {
           this.drawText = message.playerData
+          this.addedImages = []
+          this.imageTransform = []
+          this.textList = []
+          this.textTransform = []
+          this.loadedImages = []
+          this.progress = 0
         }
       }
     });
@@ -369,98 +383,122 @@ export default {
       this.send(dat)
     },
 
-    setRevealContent(message1){
+    async setRevealContent(message1) {
+      //this.revealLine = ["Jason", "Marcel", "Enns"]
       this.canvasRender = false
-      let message = 
-          {
-    func: 'finished',
-    sessionData: [
-      [
-        { player: 'Marcel', content: 'baum' },
-        {
-          player: 'Enns',
-          content: {
-            images: [
-              
-                'https://w7.pngwing.com/pngs/561/342/png-transparent-tree-large-green-tree-green-tree-illustration-leaf-branch-presentation-thumbnail.png'
-            ],
-            imageTransform: [ { width: 200, height: 200, rotation: 0 } ],
-            text: [],
-            textTransform: []
-          }
-        },
-        { player: 'Jason', content: 'haus' }
-      ],
-      [
-        { player: 'Enns', content: 'tisch' },
-        {
-          player: 'Jason',
-          content: {
-            images: [
-              
-                'https://w7.pngwing.com/pngs/631/788/png-transparent-table-wood-tables-orange-table-illustration-angle-furniture-rectangle-thumbnail.png'
-            ],
-            imageTransform: [ { width: 200, height: 200, rotation: 0 } ],
-            text: [],
-            textTransform: []
-          }
-        },
-        { player: 'Marcel', content: 'baum' }
-      ],
-      [
-        { player: 'Jason', content: 'haus' },
-        {
-          player: 'Marcel',
-          content: {
-            images: [
-              
-                'https://w7.pngwing.com/pngs/789/105/png-transparent-beige-house-with-manicured-lawn-house-home-apartment-house-building-apartment-room-thumbnail.png'
-            ],
-            imageTransform: [ { x: 218, y: 152, width: 200, height: 200, rotation: 0 } ],
-            text: [],
-            textTransform: []
-          }
-        },
-        { player: 'Enns', content: 'tisch' }
-      ]
-    ]
-  }
-        
-        this.mode = 3
-        this.selfReady = false
+      let message =
+      {
+        func: 'finished',
+        line: ['Jason', 'Marcel', 'Enns'],
+        sessionData: [
+          [
+            { player: 'Jason', content: 'baum' },
+            {
+              player: 'Jason',
+              content: {
+                images: [
 
-        let comb = {}
-        let arr = []
+                  'https://w7.pngwing.com/pngs/561/342/png-transparent-tree-large-green-tree-green-tree-illustration-leaf-branch-presentation-thumbnail.png'
+                ],
+                imageTransform: [{ width: 200, height: 200, rotation: 0 }],
+                text: [],
+                textTransform: []
+              }
+            },
+            { player: 'Jason', content: 'baum1' }
+          ],
+          [
+            { player: 'Marcel', content: 'haus' },
+            {
+              player: 'Marcel',
+              content: {
+                images: [
 
-        let sessionData = message.sessionData[0]
+                  'https://w7.pngwing.com/pngs/789/105/png-transparent-beige-house-with-manicured-lawn-house-home-apartment-house-building-apartment-room-thumbnail.png'
+                ],
+                imageTransform: [{ width: 200, height: 200, rotation: 0 }],
+                text: [],
+                textTransform: []
+              }
+            },
+            { player: 'Marcel', content: 'haus1' }
+          ],
+          [
+            { player: 'Enns', content: 'tisch' },
+            {
+              player: 'Enns',
+              content: {
+                images: [
+
+                  'https://w7.pngwing.com/pngs/631/788/png-transparent-table-wood-tables-orange-table-illustration-angle-furniture-rectangle-thumbnail.png'
+                ],
+                imageTransform: [{ width: 200, height: 200, rotation: 0 }],
+                text: [],
+                textTransform: []
+              }
+            },
+            { player: 'Enns', content: 'tisch1' }
+          ]
+        ]
+      }
+
+      message = message1
+
+      this.mode = 3
+      this.selfReady = false
+
+      let comb = {}
+      let arr = []
+
+
+      for (let k = 0; k < message.sessionData.length; k++) {
+        let sessionData = message.sessionData[k]
+        arr = []
         console.log(sessionData)
-        for(let i = 0; i < sessionData.length; i++){
+        for (let i = 0; i < sessionData.length; i++) {
+          this.canvasRender = false
           let isImage = (i % 2) > 0
-          if(isImage){
+          this.currentRevealPlayer = sessionData[i].player
+          if (isImage) {
             comb.image = sessionData[i].content
             let loadedImages = []
-            let id = ""
-            for(let j = 0; j < sessionData[i].content.images.length; j++){
-              id = "index-" + i + "-" + j
-              this.loadImagesForReveal(sessionData[i].content.images[j], id)
+            for (let j = 0; j < sessionData[i].content.images.length; j++) {
+              let li = await this.loadImagesForReveal(sessionData[i].content.images[j])
+              loadedImages.push(li)
             }
             comb.loadedImages = loadedImages
-            comb.id = id
             console.log(comb.loadedImages)
             arr.push(comb)
-            comb = {}
-          }else{
-            comb.prompt = sessionData[i].content + " [" + sessionData[i]
+          } else {
+            comb.prompt = sessionData[i].content
+            arr.push(comb)
           }
           comb.player = sessionData[i].player
+          comb = {}
+          this.revealData = arr
+          console.log(this.revealData)
+          nextTick(() => {
+            this.canvasRender = true
+            nextTick(() => {
+              let scroll = this.$refs.scroll;
+              scroll.scrollTop = scroll.scrollHeight;
+            })
+          })
+          await this.delay(4000)
         }
 
-        this.revealData = arr
+
+
         console.log(arr)
 
         nextTick(() => {
           this.canvasRender = true
         })
+      }
+    },
+
+    delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     },
 
     loadSliderSettings() {
@@ -517,32 +555,74 @@ export default {
       };
     },
 
-    imageConfigForView(index) {
-      if (this.imageTransform[index] === undefined) {
-        this.imageTransform[index] = {
-          width: 200,
-          height: 200,
-          rotation: 0,
-        };
+    imageConfigForView(dat) {
+      let arr = []
+      if (dat !== undefined) {
+        for (let i = 0; i < dat.length; i++) {
+          let config = dat[i]
+          if (config === undefined) {
+            config = {
+              width: 200,
+              height: 200,
+              rotation: 0,
+            };
+          }
+          arr.push({
+            x: config === undefined ? 100 : config.x,
+            y: config === undefined ? 100 : config.y,
+            width: config.width,
+            height: config.height,
+            rotation: config.rotation,
+            draggable: false,
+            onDragMove: (event) => {
+              this.onImage(index)
+              config = {
+                x: event.target.x(),
+                y: event.target.y(),
+                width: config.width,
+                height: config.height,
+                rotation: config.rotation
+              };
+            },
+          })
+        }
       }
-      return {
-        x: this.imageTransform[index] === undefined ? 100 : this.imageTransform[index].x,
-        y: this.imageTransform[index] === undefined ? 100 : this.imageTransform[index].y,
-        width: this.imageTransform[index].width,
-        height: this.imageTransform[index].height,
-        rotation: this.imageTransform[index].rotation,
-        draggable: false,
-        onDragMove: (event) => {
-          this.onImage(index)
-          this.imageTransform[index] = {
-            x: event.target.x(),
-            y: event.target.y(),
-            width: this.imageTransform[index].width,
-            height: this.imageTransform[index].height,
-            rotation: this.imageTransform[index].rotation
-          };
-        },
-      };
+      return arr
+    },
+
+    imageConfigForReveal(dat) {
+      let arr = []
+      if (dat.image !== undefined) {
+        for (let i = 0; i < dat.image.imageTransform.length; i++) {
+          let config = dat.image.imageTransform[i]
+          if (config === undefined) {
+            config = {
+              width: 200,
+              height: 200,
+              rotation: 0,
+            };
+          }
+          arr.push({
+            x: config === undefined ? 100 : config.x,
+            y: config === undefined ? 100 : config.y,
+            width: config.width,
+            height: config.height,
+            rotation: config.rotation,
+            draggable: false,
+            onDragMove: (event) => {
+              this.onImage(index)
+              config = {
+                x: event.target.x(),
+                y: event.target.y(),
+                width: config.width,
+                height: config.height,
+                rotation: config.rotation
+              };
+            },
+          })
+        }
+      }
+      return arr
     },
 
     increaseProgress() {
@@ -574,26 +654,25 @@ export default {
       this.addedImages.forEach((imageUrl, index) => {
         const img = new Image();
         img.onload = () => {
-          // Füge das vollständig geladene Bild zum Array hinzu
           this.loadedImages[index] = img;
-          // Überprüfe, ob alle Bilder geladen sind, bevor du mit dem Zeichnen beginnst
-          if (this.loadedImages.length === this.addedImages.length) {
-            //this.drawImages();
-          }
+
         };
         img.src = imageUrl;
       });
     },
 
-    loadImagesForReveal(imageUrl, index) {
-      let loadedImage = null
-      const img = new Image();
+    loadImagesForReveal(imageUrl) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
         img.onload = () => {
-
+          // Wenn das Bild geladen ist, wird es in loadedImages gespeichert
+          resolve(img); // Das Bild wird im Promise als Rückgabewert übergeben
         };
-        img.src = imageUrl;
-        let arr = [index, img]
-        this.loadedRevealImage.push(arr)
+        img.onerror = (error) => {
+          reject(new Error(`Bild konnte nicht geladen werden: ${imageUrl}`));
+        };
+        img.src = imageUrl; // Startet den Bildladevorgang
+      });
     },
 
     onUp(index) {

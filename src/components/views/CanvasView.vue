@@ -1,29 +1,31 @@
 <template>
   <!--<button @click="showContent">Show Content</button>-->
-  <v-stage :config="stageConfig" ref="stage">
-    <v-layer>
-      <v-image v-for="(imageUrl, index) in sortedLoaded" :key="index" :image="imageUrl"
-        :config="imageConfig"/>
-      <v-text v-for="(text, index) in textList" :config="{
-        text: text.text,
-        x: this.textTransform[index] === undefined ? 50 : this.textTransform[index].x,
-        y: this.textTransform[index] === undefined ? 50 : this.textTransform[index].y,
-        draggable: false,
-        fill: 'black',
-        fontSize: text.fontSize,
-        onDragMove: (event) => {
-          this.onText(index)
-          this.textTransform[index] = {
-            x: event.target.x(),
-            y: event.target.y(),
-          };
-        },
-      }" />
-    </v-layer>
-  </v-stage>
-  <div class="center white-background" style="width: 800px;">
-          <h2 class="text-center" style="margin-top: 5px; margin-bottom: 5px">{{ prompt }}</h2>
-        </div>
+
+  <div class="reveal-canvas" v-if="prompt === undefined">
+    <v-stage :config="stageConfig" ref="stage">
+      <v-layer>
+        <v-image v-for="(imageUrl, index) in sortedLoaded" :key="index" :image="imageUrl" :config="imageConfig[index]" />
+        <v-text v-for="(text, index) in textList" :config="{
+          text: text.text,
+          x: this.textTransform[index] === undefined ? 50 : this.textTransform[index].x,
+          y: this.textTransform[index] === undefined ? 50 : this.textTransform[index].y,
+          draggable: false,
+          fill: 'black',
+          fontSize: text.fontSize,
+          onDragMove: (event) => {
+            this.onText(index)
+            this.textTransform[index] = {
+              x: event.target.x(),
+              y: event.target.y(),
+            };
+          },
+        }" />
+      </v-layer>
+    </v-stage>
+  </div>
+  <div class="center white-background" style="width: 800px;" v-else>
+    <h2 class="text-center" style="margin-top: 5px; margin-bottom: 5px">{{ prompt }}</h2>
+  </div>
 </template>
 
 
@@ -48,7 +50,6 @@ export default {
   },
   data() {
     return {
-      textList: [],
       sortedLoaded: []
     }
   },
@@ -59,19 +60,13 @@ export default {
   },
 
   mounted() {
-    for(let i = 0; i < this.loadedImages.length; i++){
-      let id = this.loadedImages[i][0]
-      let content = this.loadedImages[i][1]
-      if(id === this.loadedIndex){
-        this.sortedLoaded.push(content)
-      }
-    }
+    this.sortedLoaded = this.loadedImages
     this.showContent()
   },
 
   methods: {
 
-    showContent(){
+    showContent() {
       console.log("stageConfig", this.stageConfig)
       console.log("loadedImages", this.loadedImages)
       console.log("imageConfig", this.imageConfig)
