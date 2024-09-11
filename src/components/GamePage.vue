@@ -33,6 +33,22 @@
     <div v-if="!selfReady">
       <div class="center-horizontal">
         <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinishImage" color="line1" />
+        <FreeTransform
+            :x="0"
+            :y="0"
+            :scale-x="1"
+            :scale-y="1"
+            :width="100"
+            :height="100"
+            :angle="0"
+            :offset-x="0"
+            :offset-y="0"
+            @update="updateTransform($event)"
+        >
+          <div style="width: 50px; height: 50px; background: #5cf0ff">
+          </div>
+
+        </FreeTransform>
       </div>
       <div style="height: 20px"></div>
       <div class="center-horizontal">
@@ -50,6 +66,7 @@
       <LayerEditor :sampler="true" :layers="addedImages" />
       <div style="width: 200px"></div>
       <div class="canvas" v-if="reloadCanvas">
+
         <v-stage :config="stageConfig" @mousedown="handleMouseDown" @mousemove="handleMouseMove"
           @mouseup="handleMouseUp" ref="stage">
           <v-layer>
@@ -162,6 +179,17 @@
       </div>
     </div>
   </div>
+  <div class="target" ref="target">Vue Moveable</div>
+  <Moveable
+      className="moveable"
+      v-bind:target="['.target']"
+      v-bind:draggable="true"
+      v-bind:scalable="true"
+      v-bind:rotatable="true"
+      @drag="onDrag"
+      @scale="onScale"
+      @rotate="onRotate"
+  />
 
 </template>
 
@@ -180,15 +208,16 @@ import LayerEditor from "@/components/views/LayerEditor.vue";
 import { HttpRequest } from "@/components/code/HttpRequest";
 import CanvasView from "./views/CanvasView.vue";
 import PlayerLine from "./views/PlayerLine.vue";
+import Moveable from "vue3-moveable";
 
 
 export default {
   name: "GamePage",
-  components: { LayerEditor, AddTextPopup, ImageSearchPopup, UIButton, CanvasView, PlayerLine },
+  components: { LayerEditor, AddTextPopup, ImageSearchPopup, UIButton, CanvasView, PlayerLine, Moveable },
   data() {
     return {
       lang: langEN,
-      mode: 0,
+      mode: 1,
       selfReady: false,
       showISP: false,
       stageConfig: {
@@ -254,7 +283,7 @@ export default {
     */
 
 
-    this.increaseProgress()
+    //this.increaseProgress()
 
     //this.setRevealContent()
 
@@ -356,6 +385,16 @@ export default {
         args: [this.$refs.prompt.value, this.getCookies("username")]
       }
       this.send(dat)
+    },
+
+    onDrag({ transform }) {
+      this.$refs.target.style.transform = transform;
+    },
+    onScale({ drag }) {
+      this.$refs.target.style.transform = drag.transform;
+    },
+    onRotate({ drag }) {
+      this.$refs.target.style.transform = drag.transform;
     },
 
     onClickFinishRating() {

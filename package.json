@@ -13,15 +13,18 @@
   },
   "dependencies": {
     "@kyvg/vue3-notification": "^3.1.1",
+    "@pin-us/vue-free-transform": "^1.0.11-beta.1",
     "axios": "^1.6.5",
     "konva": "^9.3.0",
     "vue": "^3.3.11",
     "vue-cookies": "^1.8.3",
     "vue-draggable-next": "^2.2.1",
+    "vue-free-transform": "^1.0.11",
     "vue-konva": "^3.0.2",
     "vue-router": "^4.2.5",
     "vue-slider-component": "^4.1.0-beta.7",
     "vue3-form-render-vuedraggable": "^4.0.1-beta.1",
+    "vue3-moveable": "^0.28.0",
     "vue3-notification": "^0.0.3",
     "vueprogressionbar": "^0.1.3"
   },
