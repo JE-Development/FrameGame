@@ -42,6 +42,7 @@
     "transformWidth": "Breite",
     "transformHeight": "Höhe",
     "transformSize": "Größe",
+    "restartGame": "Nochmal spielen",
     "transformRotation": "Drehung"
   },
   "jwc": {

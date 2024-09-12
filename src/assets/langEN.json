@@ -42,6 +42,7 @@
     "transformWidth": "Width",
     "transformHeight": "Height",
     "transformSize": "Size",
+    "restartGame": "Restart game",
     "transformRotation": "Rotation"
   },
   "jwc": {

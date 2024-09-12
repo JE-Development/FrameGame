@@ -5,6 +5,17 @@
   <ImageSearchPopup :show="showISP" @close="closeISP" @img="imageClicked" />
   <AddTextPopup :show="showTextPopup" @close="closeText" @text="addedText" />
 
+  <div class="center-horizontal" v-if="mode !== 3">
+    <div style="width: 80%;">
+      <PlayerLine v-for="dat in names" :name="dat.name" :img="dat.pb" :selected="dat.ready" />
+    </div>
+  </div>
+  <div v-if="isHost && mode === 3">
+    <div class="center-horizontal">
+      <UIButton :title="lang.game.restartGame" @click="onClickRestart" color="line1" />
+    </div>
+  </div>
+
   <div v-if="mode === 0">
     <div class="center full-size">
       <div style="margin-bottom: 100px">
@@ -22,7 +33,7 @@
   </div>
 
   <div v-if="mode === 1">
-    <div class="center-horizontal">
+    <!--<div class="center-horizontal">
       <div :style="'width: ' + 100 * progressMultiply + 'px; height: 10px'">
         <div :style="'width: ' + 100 * progressMultiply + 'px; height: 10px; background: #eeeeee'" class="absolute">
         </div>
@@ -30,6 +41,7 @@
           class="absolute"></div>
       </div>
     </div>
+  -->
     <div class="center-horizontal">
       <div class="to-draw-text round-corner">{{ drawText }}</div>
     </div>
@@ -200,12 +212,14 @@ export default {
     return {
       lang: langEN,
       mode: 0,
+      names: [],
       selfReady: false,
       showISP: false,
       stageConfig: {
         width: 800,
         height: 600,
       },
+      isHost: false,
       addedImages: [],
       reloadCanvas: true,
       loadedImages: [],
@@ -240,7 +254,7 @@ export default {
       revealData: [],
       loadedRevealImage: [],
       revealLine: [],
-      currentRevealPlayer: []
+      currentRevealPlayer: [],
     };
   },
 
@@ -271,6 +285,10 @@ export default {
 
     //this.loadImage(this.image, this.imageConfig);
 
+    if (this.getCookies("host") === "true") {
+      this.isHost = true
+    }
+
     if (this.getCookies("lang") === null || this.getCookies("lang") === "en") {
       this.lang = langEN
     } else {
@@ -292,11 +310,22 @@ export default {
       };
       this.send(dat);
 
+      dat = {
+        type: "ping",
+        func: "getPlayers"
+      };
+      this.send(dat);
+
+      dat = {
+        type: "ping",
+        func: "existRoom"
+      };
+      this.send(dat);
+
     });
 
     this.socket.addEventListener('error', (event) => {
-      this.unableMessage = this.lang.register.serverDown
-
+      this.$router.push("/")
     });
 
 
@@ -313,6 +342,16 @@ export default {
       } else if (message.func === "readyImage") {
         this.mode = 2
         this.selfReady = false
+      } else if (message.func === "playerIsReady") {
+        for (let i = 0; i < this.names.length; i++) {
+          if (this.names[i].name === message.player) {
+            this.names[i].ready = true
+          }
+        }
+      } else if (message.func === "everyoneUnready") {
+        for (let i = 0; i < this.names.length; i++) {
+          this.names[i].ready = false
+        }
       } else if (message.func === "finished") {
         console.log("finished: ")
         console.log(message)
@@ -325,6 +364,19 @@ export default {
         http.httpRequestPost("https://inforgeserver.de:8000/upload", "image", b64).then((json) => {
           console.log(json)
         })
+      } else if (message.func === "clearGame") {
+        this.mode = 0
+        this.selfReady = false
+        this.addedImages = []
+        this.imageTransform = []
+        this.textList = []
+        this.textTransform = []
+        this.progress = 0
+        let dat = {
+          type: "ping",
+          func: "getPlayers"
+        };
+        this.send(dat);
       } else if (message.func === "dataForPrompt") {
         if (message.toPlayer === this.getCookies("username")) {
           this.selfReady = false
@@ -335,9 +387,6 @@ export default {
           this.textList = canvas.text
           this.textTransform = canvas.textTransform
           this.loadedImages = []
-          for (let i = 0; i < this.addedImages.length; i++) {
-            this.loadedImages.push(null)
-          }
           nextTick(() => {
             this.canvasRender = true
           })
@@ -352,6 +401,34 @@ export default {
           this.loadedImages = []
           this.progress = 0
         }
+      } else if (message.func === "existRoom") {
+        if (!message.exist) {
+          this.$router.push("/")
+        }
+      } else if (message.func === "allPlayers") {
+        if (message.players.length === 0) {
+          this.$router.push("/")
+        } else {
+          this.names = []
+
+          let allPlayers = message.players
+          for (let i = 0; i < allPlayers.length; i++) {
+            let dat = {
+              name: allPlayers[i].name,
+              pb: allPlayers[i].pb,
+              ready: false
+            }
+            this.names.push(dat)
+          }
+
+          let names1 = this.names
+          this.names = []
+          nextTick().then(() => {
+            this.names = names1
+          })
+        }
+
+
       }
     });
 
@@ -365,6 +442,15 @@ export default {
         type: "engine",
         func: "readyPrompt",
         args: [this.$refs.prompt.value, this.getCookies("username")]
+      }
+      this.send(dat)
+    },
+
+    onClickRestart() {
+      this.mode = 0
+      let dat = {
+        type: "engine",
+        func: "restartGame"
       }
       this.send(dat)
     },
@@ -457,8 +543,8 @@ export default {
 
 
 
-      let message = { "func": "finished", "line": ["Jason", "Marcel", "Enns"], "sessionData": [[{ "player": "Jason", "content": "baum" }, { "player": "Jason", "content": { "images": ["https://w7.pngwing.com/pngs/114/380/png-transparent-emerald-ash-borer-tree-green-ash-graphy-shrub-baum-grass-ash-woody-plant-thumbnail.png"], "imageTransform": [" translate(234px, 141px) "], "text": [{ "text": "baum", "fontSize": 50 }], "textTransform": [" translate(308.5px, -332px) scale(3.51899, 1.86207)"] } }, { "player": "Jason", "content": "baum1" }], [{ "player": "Marcel", "content": "haus" }, { "player": "Marcel", "content": { "images": ["https://w7.pngwing.com/pngs/789/105/png-transparent-beige-house-with-manicured-lawn-house-home-apartment-house-building-apartment-room-thumbnail.png"], "imageTransform": [" translate(265px, 292px) "], "text": [{ "text": "hallo", "fontSize": 50 }, { "text": "haus", "fontSize": 50 }], "textTransform": [" translate(358.999px, 2.5px) scale(4.97573, 0.844828)", " translate(297px, -167px) rotate(111.041deg)"] } }, { "player": "Marcel", "content": "haus1" }], [{ "player": "Enns", "content": "tisch" }, { "player": "Enns", "content": { "images": ["https://image.shutterstock.com/image-photo/loket-czech-republic-260nw-1176283288.jpg", "https://w7.pngwing.com/pngs/631/788/png-transparent-table-wood-tables-orange-table-illustration-angle-furniture-rectangle-thumbnail.png"], "imageTransform": [" translate(224px, 246px) rotate(104.677deg)", " translate(282px, -77.5px) scale(1, 1.7714285714285714)"], "text": [{ "text": "house", "fontSize": 50 }, { "text": "table", "fontSize": 50 }], "textTransform": [" translate(111px, -90.5px) rotate(51.8571deg) scale(3.36358, 1.77586)", " translate(98.4997px, -478px) scale(2.74293, 2.55172)"] } }, { "player": "Enns", "content": "tisch1" }]] }
-      message = message1
+      let message = {"func":"finished","line":[["Jason","squid"],["Marcel","sigma"]],"sessionData":[[{"player":"Jason","content":"tisch"},{"player":"Jason","content":{"images":["https://w7.pngwing.com/pngs/631/788/png-transparent-table-wood-tables-orange-table-illustration-angle-furniture-rectangle-thumbnail.png"],"imageTransform":[" translate(235px, 182px) "],"text":[],"textTransform":[]}}],[{"player":"Marcel","content":"stuhl"},{"player":"Marcel","content":{"images":["https://w7.pngwing.com/pngs/986/34/png-transparent-office-desk-chairs-swivel-chair-chair-angle-furniture-office-thumbnail.png"],"imageTransform":[" translate(231px, 135px) "],"text":[],"textTransform":[]}}]]}
+      //message = message1
 
 
       for (let k = 0; k < message.sessionData.length; k++) {

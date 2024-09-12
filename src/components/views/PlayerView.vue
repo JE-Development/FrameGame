@@ -4,7 +4,7 @@
     <div class="center">
       <div>
         <div class="center-horizontal">
-          <img :src="pb" class="pb" style="width: 50px" v-if="!isSad" />
+          <img :src="pb" class="pb" style="width: 50px" />
         </div>
         <div class="center-horizontal">
           <h3 class="white">{{ name }}</h3>

@@ -1,7 +1,7 @@
 <template>
 
-    <button class="register-button center-horizontal" :class="disabled ? color + ' disabled-cursor' : color + ' pointer'" @click="click" :disabled="disabled">
-        <p style="margin-top: 5px" class="black">{{ title }}</p>
+    <button class="register-button center" :class="disabled ? color + ' disabled-cursor' : color + ' pointer'" @click="click" :disabled="disabled">
+        <p style="margin-top: 0px; margin-bottom: 0px;" class="black">{{ title }}</p>
     </button>
     <button class="register-button center-horizontal shadow absolute on-bottom" @click="click">
 

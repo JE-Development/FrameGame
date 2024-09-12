@@ -151,6 +151,9 @@ export default {
 
     onClickJoin(){
       let username = this.$refs.usernameinput.value
+      if(username.length > 15){
+        username = username.slice(0,15) + "..."
+      }
       this.setCookies("username", username)
 
       this.clicked = true
@@ -206,6 +209,9 @@ export default {
       this.unableMessage = ""
 
       let username = this.$refs.usernameinput.value
+      if(username.length > 15){
+        username = username.slice(0,15) + "..."
+      }
 
       this.setCookies("username", username)
 
