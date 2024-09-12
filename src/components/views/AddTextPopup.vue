@@ -23,7 +23,7 @@
                       @keyup.enter="addTextClicked"
                       ref="text"
                       :placeholder="lang.game.addTextPlaceholder"
-                      class="google-search-input shadow texture"/>
+                      class="google-search-input shadow"/>
                 </div>
 
                 <div style="height: 20px"></div>

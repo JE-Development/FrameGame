@@ -1,16 +1,16 @@
 <template>
-  <div class="reveal-canvas" v-if="prompt === undefined">
+  <div class="reveal-canvas relative" v-if="prompt === undefined">
     <div v-for="(imageUrl, index) in loadedImages">
-      <img :class="'target' + index" :src="imageUrl" :style="{ transform: imageConfig[index] }" />
+      <img class="absolute" :class="'target' + index" :src="imageUrl" :style="{ transform: imageConfig[index] }" />
     </div>
     <div v-for="(text, index) in textList">
-      <div :class="'targettext' + index" style="display: inline-block; font-size: 50px;"
+      <div class="absolute" :class="'targettext' + index" style="display: inline-block; font-size: 50px;"
         :style="{ transform: textTransform[index] }">{{ text.text }}
       </div>
     </div>
   </div>
   <div class="center white-background" style="width: 800px;" v-else>
-    <h2 class="text-center" style="margin-top: 5px; margin-bottom: 5px">{{ prompt }}</h2>
+    <h2 class="text-center black" style="margin-top: 5px; margin-bottom: 5px">{{ prompt }}</h2>
     </div>
 </template>
 

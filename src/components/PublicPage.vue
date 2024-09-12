@@ -1,5 +1,7 @@
 <template>
 
+<BackgroundView/>
+
   <div class="center-horizontal">
     <div>
       <div v-if="rooms.length === 0">
@@ -27,11 +29,12 @@ import {nextTick} from "vue";
 import langDE from "../assets/langDE.json"
 import langEN from "../assets/langEN.json"
 import PublicRoom from "@/components/views/PublicRoom.vue";
+import BackgroundView from "./views/BackgroundView.vue";
 
 export default {
     //npm run dev | npm run build
     name: "PublicPage",
-    components: {PublicRoom, PlayerView},
+    components: {PublicRoom, PlayerView, BackgroundView},
     data() {
         return {
             rooms: [],

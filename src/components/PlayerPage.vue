@@ -1,9 +1,11 @@
 <template>
 
+<BackgroundView/>
+
   <div class="center-horizontal" v-if="isHost">
     <div class="center-horizontal">
       <div class="absolute">
-        <h2 class="link-background center-horizontal">{{baseURI}}/code/{{getCookies("rc")}}</h2>
+        <h2 class="link-background center-horizontal black">{{baseURI}}/code/{{getCookies("rc")}}</h2>
       </div>
       <div style="height: 60px"></div>
     </div>
@@ -31,7 +33,7 @@
             <UIButton :title="lang.playerPage.startButton" @click="onClickStart" color="prim-color-background"/>
           </div>
           <div class="center">
-            <h2 class="white">{{lang.playerPage.visibility}}</h2>
+            <h2>{{lang.playerPage.visibility}}</h2>
             <input type="checkbox" class="check-box" ref="vis" checked @click="visClicked">
           </div>
           <h2 class="red">{{errorText}}</h2>
@@ -51,10 +53,11 @@ import {nextTick} from "vue";
 import langDE from "../assets/langDE.json"
 import langEN from "../assets/langEN.json"
 import UIButton from "@/components/views/UIButton.vue";
+import BackgroundView from "./views/BackgroundView.vue";
 
 export default {
     name: "PlayerPage",
-    components: {UIButton, PlayerView},
+    components: {UIButton, PlayerView, BackgroundView},
     data() {
         return {
             names: [],

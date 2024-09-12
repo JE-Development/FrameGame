@@ -1,4 +1,7 @@
 <template>
+
+<BackgroundView/>
+
   <ProfilePopup :show="pbShow" @close="pbClose"/>
   <LangSelection @click="langClicked" :lang="lang.langVis"/>
   <div class="center-horizontal full-size">
@@ -44,10 +47,11 @@ import langDE from "../assets/langDE.json"
 import langEN from "../assets/langEN.json"
 import LangSelection from "@/components/views/LangSelection.vue";
 import UIButton from "@/components/views/UIButton.vue";
+import BackgroundView from "./views/BackgroundView.vue";
 
 export default {
   name: "JoinWithCode",
-  components: {UIButton, LangSelection, ProfilePopup},
+  components: {UIButton, LangSelection, ProfilePopup, BackgroundView},
   data() {
     return {
       username: "",

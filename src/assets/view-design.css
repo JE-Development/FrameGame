@@ -4,9 +4,8 @@
     height: 50px;
     margin: 2px;
 
-    border: 3px solid transparent;
+    border: none;
 
-    cursor: pointer;
     border-radius: 10px;
 
     font-size: 25px;
@@ -44,7 +43,7 @@
 }
 
 .link-background{
-    width: 600px;
+    width: auto;
     background: #e3e3e3;
     padding-right: 5px;
     padding-left: 5px;
@@ -58,14 +57,22 @@
     padding-right: 10px;
 }
 
-.register-input{
-    width: 400px;
-    height: 30px;
+input{
+    outline: none !important;
     font-size: 20px;
     border: solid;
     border-radius: 10px;
-    border-color: transparent;
     padding-left: 10px;
+    background-image: linear-gradient(90deg, #f7deff, #e7cbff);
+}
+
+.register-input{
+    width: 400px;
+    height: 30px;
+}
+
+input:focus{
+    border-color: #4299E1
 }
 
 .canvas{
@@ -79,28 +86,19 @@
     width: 800px;
     height: 600px;
     background: #ffffff;
+    overflow: hidden;
 }
 
 .prompt-input{
     width: 90vw;
     max-width: 730px;
     height: 30px;
-    font-size: 20px;
-    border: solid;
-    border-radius: 10px;
-    border-color: transparent;
-    padding-left: 10px;
 }
 
 .google-search-input{
     width: 90vw;
     max-width: 400px;
     height: 30px;
-    font-size: 20px;
-    border: solid;
-    border-radius: 10px;
-    border-color: transparent;
-    padding-left: 10px;
 }
 
 .search-image{
@@ -119,11 +117,17 @@
 
 .player-card{
     margin: 10px;
-
-    background: #00000022;
+    border: solid 2px;
+    border-color: transparent;
+    background: #ffffff1a;
     width: 180px;
     height: 160px;
     border-radius: 20px;
+}
+
+.player-card-selected{
+    border: solid 2px;
+    border-color: white;
 }
 
 .dice-border{
@@ -166,22 +170,22 @@
 
 
 .line1{
-    background: #c9ff8a;
+    background-image: linear-gradient(90deg, #c9ff8a, #8affce);
 }
 .line2{
-    background: #83ffa6;
+    background-image: linear-gradient(90deg, #83ffa6, #83ffee);
 }
 .line3{
-    background: #5cf0ff;
+    background-image: linear-gradient(90deg, #5cf0ff, #3b6fff);
 }
 .line4{
-    background: #8999ff;
+    background-image: linear-gradient(90deg, #8999ff, #c689ff);
 }
 .line5{
-    background: #ff88d9;
+    background-image: linear-gradient(90deg, #ff88d9, #ff8888);
 }
 .line6{
-    background: #ffa600;
+    background-image: linear-gradient(90deg, #ffa600, #d9ff00);
 }
 
 .prim-color{
@@ -189,7 +193,7 @@
 }
 
 .prim-color-background{
-    background: #ffa600;
+    background-image: linear-gradient(90deg, #ff9100, #ffee00);
 
 }
 
@@ -214,7 +218,7 @@
 }
 
 .shadow{
-    box-shadow: 0px 0px 20px #000000;
+    box-shadow: 0px 0px 20px #e100ff;
 }
 
 .sec-color-text{

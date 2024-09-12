@@ -17,7 +17,7 @@
 <template>
 
 <div class="center-horizontal name-line" :class="selected ? 'line-selected' : ''">
-  <h2 style="margin-top: 0px; margin-bottom: 0px;">{{ name }}</h2>
+  <h2 style="margin-top: 0px; margin-bottom: 0px;" class="black">{{ name }}</h2>
 </div>
 
 </template>

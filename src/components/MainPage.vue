@@ -1,6 +1,10 @@
 <template>
   <ProfilePopup :show="pbShow" @close="pbClose"/>
   <LangSelection @click="langClicked" :lang="lang.langVis"/>
+
+
+  <BackgroundView/>
+
 <div class="center-horizontal full-size">
     <div>
 
@@ -18,22 +22,22 @@
                   ref="usernameinput"
                   :value="username"
                   :placeholder="lang.register.usernamePlaceholder"
-                  class="register-input shadow texture"/>
+                  class="register-input shadow"/>
             </div>
           </div>
         </div>
         <div style="margin-top: 10px"/>
       <div class="center-horizontal">
         <div class="center-horizontal">
-          <UIButton :title="lang.register.roomButton" @click="onClickRoom" color="third-color-background"/>
+          <UIButton :title="lang.register.roomButton" @click="onClickRoom" color="line1"/>
         </div>
         <div class="center-horizontal">
-          <UIButton :title="lang.register.listButton" @click="onClickPublic" color="fourth-color-background"/>
+          <UIButton :title="lang.register.listButton" @click="onClickPublic" color="line3"/>
         </div>
       </div>
       <div style="height: 40px"></div>
       <div class="center-horizontal">
-        <UIButton :title="lang.register.gameInstructionsButton" @click="onClickInstruction" color="sec-color"/>
+        <UIButton :title="lang.register.gameInstructionsButton" @click="onClickInstruction" color="line4"/>
       </div>
         <div class="center-horizontal">
           <h2 class="red">{{unableMessage}}</h2>
@@ -51,10 +55,11 @@ import langDE from "../assets/langDE.json"
 import langEN from "../assets/langEN.json"
 import LangSelection from "@/components/views/LangSelection.vue";
 import UIButton from "@/components/views/UIButton.vue";
+import BackgroundView from "./views/BackgroundView.vue";
 
 export default {
     name: "MainPage",
-  components: {UIButton, LangSelection, ProfilePopup},
+  components: {UIButton, LangSelection, ProfilePopup, BackgroundView},
     data() {
         return {
             username: "",

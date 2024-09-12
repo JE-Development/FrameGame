@@ -23,7 +23,7 @@
                       @keyup.enter="onSearch"
                       ref="search"
                       :placeholder="lang.game.imageSearchPlaceholder"
-                      class="google-search-input shadow texture"/>
+                      class="google-search-input shadow"/>
                 </div>
 
                 <div class="center-horizontal">

@@ -1,11 +1,11 @@
 <template>
 
-  <button class="register-button center-horizontal texture" :class="color" @click="click">
-    <p style="margin-top: 5px">{{title}}</p>
-  </button>
-  <button class="register-button center-horizontal shadow absolute on-bottom" @click="click">
+    <button class="register-button center-horizontal" :class="disabled ? color + ' disabled-cursor' : color + ' pointer'" @click="click" :disabled="disabled">
+        <p style="margin-top: 5px" class="black">{{ title }}</p>
+    </button>
+    <button class="register-button center-horizontal shadow absolute on-bottom" @click="click">
 
-  </button>
+    </button>
 
 </template>
 
@@ -19,29 +19,31 @@ export default {
         };
     },
 
-    props:{
+    props: {
         title: String,
-      color: String
+        color: String,
+        disabled: Boolean
     },
 
     created() {
     },
     mounted() {
+        
     },
 
 
 
     methods: {
 
-        click(){
+        click() {
             this.$emit("click")
         },
 
 
-        getCookies(key){
+        getCookies(key) {
             return this.$cookies.get(key);
         },
-        setCookies(key, value){
+        setCookies(key, value) {
             return this.$cookies.set(key, value, 2147483647);
         },
     }

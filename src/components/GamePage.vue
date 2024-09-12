@@ -1,18 +1,21 @@
 <template>
 
+  <BackgroundView />
+
   <ImageSearchPopup :show="showISP" @close="closeISP" @img="imageClicked" />
   <AddTextPopup :show="showTextPopup" @close="closeText" @text="addedText" />
 
   <div v-if="mode === 0">
     <div class="center full-size">
       <div style="margin-bottom: 100px">
-        <input ref="prompt" :placeholder="lang.game.createPromptPlaceholder" class="prompt-input shadow texture" />
+        <input ref="prompt" :placeholder="lang.game.createPromptPlaceholder" class="prompt-input shadow"
+          @keyup.enter="onClickFinish" />
         <div style="height: 20px"></div>
         <div class="center-horizontal" v-if="!selfReady">
           <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinish" color="prim-color-background" />
         </div>
         <div class="center-horizontal" v-else>
-          <h2>Warte bis alle Spieler bereit sind</h2>
+          <h2 class="white">Warte bis alle Spieler bereit sind</h2>
         </div>
       </div>
     </div>
@@ -32,16 +35,23 @@
     </div>
     <div v-if="!selfReady">
       <div class="center-horizontal">
-        <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinishImage" color="line1" />
+        <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinishImage" :disabled="selfReady"
+          color="line1" />
       </div>
+      <!--<div class="center-horizontal">
+        <UIButton :title="'img to png'" @click="getImageAsBase64" color="line3" />
+      </div>
+    -->
       <div style="height: 20px"></div>
       <div class="center-horizontal">
         <div class="center-horizontal">
-          <UIButton :title="lang.game.searchImagesButton" @click="onClickSearch" color="prim-color-background" />
+          <UIButton :title="lang.game.searchImagesButton" @click="onClickSearch" :disabled="selfReady"
+            color="prim-color-background" />
         </div>
         <div style="width: 20px"></div>
         <div class="center-horizontal">
-          <UIButton :title="lang.game.addTextButton" @click="onTextClicked" color="prim-color-background" />
+          <UIButton :title="lang.game.addTextButton" @click="onTextClicked" :disabled="selfReady"
+            color="prim-color-background" />
         </div>
       </div>
     </div>
@@ -49,23 +59,24 @@
     <div class="center-horizontal" v-if="canvasRender">
       <LayerEditor :sampler="true" :layers="addedImages" />
       <div style="width: 200px"></div>
-      <div class="canvas" v-if="reloadCanvas">
+      <div class="canvas relative" v-if="reloadCanvas">
 
         <div v-for="(imageUrl, index) in addedImages">
-          <img :class="'target' + index" :src="imageUrl" v-if="layerRender" @click="onImageFocus(index)"
-            :style="{ transform: imageTransform[index] }" />
-          <Moveable v-if="selectedImageIndex === index" className="moveable" v-bind:target="['.target' + index]"
-            v-bind:draggable="true" v-bind:scalable="true" v-bind:rotatable="true" @drag="onDrag($event, index)"
-            @scale="onScale($event, index)" @rotate="onRotate($event, index)" />
+          <img class="absolute" :class="'target' + index" :src="imageUrl" v-if="layerRender"
+            @click="onImageFocus(index)" :style="{ transform: imageTransform[index] }" />
+          <Moveable v-if="selectedImageIndex === index && !selfReady" className="moveable"
+            v-bind:target="['.target' + index]" v-bind:draggable="true" v-bind:scalable="true" v-bind:rotatable="true"
+            @drag="onDrag($event, index)" @scale="onScale($event, index)" @rotate="onRotate($event, index)" />
         </div>
 
         <div v-for="(text, index) in textList">
-          <div :class="'targettext' + index" @click="onTextFocus(index)" style="display: inline-block; font-size: 50px;"
+          <div class="absolute" :class="'targettext' + index" @click="onTextFocus(index)" style="font-size: 50px;"
             :style="{ transform: textTransform[index] }">{{ text.text }}
           </div>
-          <Moveable v-if="selectedTextIndex === index" className="moveable" v-bind:target="['.targettext' + index]"
-            v-bind:draggable="true" v-bind:scalable="true" v-bind:rotatable="true" @drag="onDragText($event, index)"
-            @scale="onScaleText($event, index)" @rotate="onRotateText($event, index)" />
+          <Moveable v-if="selectedTextIndex === index && !selfReady" className="moveable"
+            v-bind:target="['.targettext' + index]" v-bind:draggable="true" v-bind:scalable="true"
+            v-bind:rotatable="true" @drag="onDragText($event, index)" @scale="onScaleText($event, index)"
+            @rotate="onRotateText($event, index)" />
         </div>
 
         <!--
@@ -100,7 +111,8 @@
       </div>
       <div style="width: 200px"></div>
       <LayerEditor :sampler="false" @up="onUp" @down="onDown" @delete="onDelete" :layers="addedImages"
-        v-if="layerRender" />
+        v-if="layerRender && !selfReady" />
+      <LayerEditor :sampler="true" @up="onUp" @down="onDown" @delete="onDelete" :layers="addedImages" v-else />
     </div>
     <div style="height: 20px"></div>
     <div class="center-horizontal" v-if="this.selectedTextIndex > -1">
@@ -112,13 +124,13 @@
 
   <div v-if="mode === 2">
     <div class="center-horizontal" v-if="canvasRender">
-      <div class="canvas" v-if="reloadCanvas">
+      <div class="canvas relative" v-if="reloadCanvas">
         <div v-for="(imageUrl, index) in addedImages">
-          <img :class="'target' + index" :src="imageUrl" v-if="layerRender"
+          <img class="absolute" :class="'target' + index" :src="imageUrl" v-if="layerRender"
             :style="{ transform: imageTransform[index] }" />
         </div>
         <div v-for="(text, index) in textList">
-          <div :class="'targettext' + index" style="display: inline-block; font-size: 50px;"
+          <div class="absolute" :class="'targettext' + index" style="display: inline-block; font-size: 50px;"
             :style="{ transform: textTransform[index] }">{{ text.text }}
           </div>
         </div>
@@ -127,8 +139,8 @@
     <div class="center-horizontal">
       <div>
         <div style="height: 20px"></div>
-        <input ref="promptRating" :placeholder="lang.game.createPromptPlaceholder"
-          class="prompt-input shadow texture" />
+        <input ref="promptRating" :placeholder="lang.game.createPromptPlaceholder" class="prompt-input shadow"
+          @keyup.enter="onClickFinishRating" />
         <div style="height: 20px"></div>
         <div class="center-horizontal" v-if="!selfReady">
           <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinishRating"
@@ -143,7 +155,8 @@
   <div v-if="mode === 3">
     <div class="center-horizontal">
       <div>
-        <PlayerLine v-for="dat in revealLine" :name="dat" :selected="dat === this.currentRevealPlayer" />
+        <PlayerView v-for="dat in revealLine" :name="dat[0]" :img="dat[1]"
+          :selected="dat[0] === this.currentRevealPlayer" />
       </div>
       <div class="scroll" ref="scroll">
         <div v-for="(dat, index) in revealData" v-if="canvasRender">
@@ -176,11 +189,13 @@ import CanvasView from "./views/CanvasView.vue";
 import PlayerLine from "./views/PlayerLine.vue";
 import Moveable from "vue3-moveable";
 import { transform } from "typescript";
+import BackgroundView from "./views/BackgroundView.vue";
+import PlayerView from "./views/PlayerView.vue";
 
 
 export default {
   name: "GamePage",
-  components: { LayerEditor, AddTextPopup, ImageSearchPopup, UIButton, CanvasView, PlayerLine, Moveable },
+  components: { LayerEditor, AddTextPopup, ImageSearchPopup, UIButton, CanvasView, PlayerLine, Moveable, BackgroundView, PlayerView },
   data() {
     return {
       lang: langEN,
@@ -299,13 +314,15 @@ export default {
         this.mode = 2
         this.selfReady = false
       } else if (message.func === "finished") {
+        console.log("finished: ")
+        console.log(message)
         this.revealLine = message.line
         this.setRevealContent(message)
 
       } else if (message.func === "base64") {
         let b64 = message.base
         let http = new HttpRequest()
-        http.httpRequestPost("http://jasonbackend.de:8000/upload", "image", b64).then((json) => {
+        http.httpRequestPost("https://inforgeserver.de:8000/upload", "image", b64).then((json) => {
           console.log(json)
         })
       } else if (message.func === "dataForPrompt") {
@@ -628,7 +645,6 @@ export default {
 
     changeIndex(indexA, indexB) {
       this.addedImages = this.indexCustomChange(this.addedImages, indexA, indexB)
-      this.loadedImages = this.indexCustomChange(this.loadedImages, indexA, indexB)
       this.imageTransform = this.indexCustomChange(this.imageTransform, indexA, indexB)
 
       this.canvasRender = false

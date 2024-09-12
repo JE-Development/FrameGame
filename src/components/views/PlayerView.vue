@@ -1,74 +1,51 @@
 <template>
 
-<div class="player-card center-horizontal">
-    <div>
-      <div class="center-horizontal">
-        <div>
-          <div>
-            <img :src="pb" class="pb absolute" style="width: 50px" v-if="!isSad"/>
-            <img :src="pbSad" class="pb" style="width: 50px"/>
-          </div>
+  <div class="player-card center-horizontal" :class="selected ? 'player-card-selected' : ''">
+    <div class="center">
+      <div>
+        <div class="center-horizontal">
+          <img :src="pb" class="pb" style="width: 50px" v-if="!isSad" />
+        </div>
+        <div class="center-horizontal">
+          <h3 class="white">{{ name }}</h3>
         </div>
       </div>
-      <div class="center-horizontal" style="height: 0px; margin-top: -10px; margin-bottom: 10px">
-        <p class="white">{{winnerCount}}</p>
-      </div>
-        <div class="center-horizontal" style="height: 40px">
-            <h3 v-if="loose" class="red">{{name}}</h3>
-            <h3 v-else-if="turn" class="green">{{name}}</h3>
-            <h3 v-else>{{name}}</h3>
-        </div>
-      <h1 class="orange">{{dice}}</h1>
     </div>
-</div>
+  </div>
 
 </template>
 
 
 <script>
 export default {
-    name: "PlayerView",
-    data() {
-        return {
-          heartlenght: [],
-          pb: "",
-          pbSad: "",
-        };
-    },
+  name: "PlayerView",
+  data() {
+    return {
+      pb: ""
+    };
+  },
 
-    props:{
-        name: String,
-        dice: String,
-        turn: Boolean,
-        loose: Boolean,
-      heart: Number,
-      img: String,
-      winner: Boolean,
-      isSad: Boolean,
-      winnerCount: Number
-    },
+  props: {
+    name: String,
+    img: String,
+    selected: Boolean
+  },
 
   created() {
 
+  },
+  mounted() {
+    this.pb = "../../src/assets/pb/" + this.img + ".png"
+  },
+  methods: {
+
+
+    getCookies(key) {
+      return this.$cookies.get(key);
     },
-    mounted() {
-      this.pb = "../../src/assets/pb/" + this.img + ".png"
-      this.pbSad = "../../src/assets/pb/sad/" + this.img + ".png"
-
-      this.heartlenght = []
-      for(let i = 0; i < this.heart; i++){
-        this.heartlenght.push("sampel")
-      }
+    setCookies(key, value) {
+      return this.$cookies.set(key, value, 2147483647);
     },
-    methods: {
-
-
-        getCookies(key){
-            return this.$cookies.get(key);
-        },
-        setCookies(key, value){
-            return this.$cookies.set(key, value, 2147483647);
-        },
-    }
+  }
 }
 </script>

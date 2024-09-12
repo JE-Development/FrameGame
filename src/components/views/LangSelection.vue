@@ -1,9 +1,9 @@
 <template>
 
     <div class="absolute pointer">
-      <div class="lang-border">
+      <div class="lang-border" style="background-color: white;">
         <img src="../../assets/lang_icon.svg" style="width: 30px">
-        <h3 style="transform: translateY(-15px); margin-left: 5px">{{lang}}</h3>
+        <h3 class="black" style="transform: translateY(-15px); margin-left: 5px">{{lang}}</h3>
       </div>
     </div>
 
