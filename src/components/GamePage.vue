@@ -544,7 +544,7 @@ export default {
 
 
       let message = {"func":"finished","line":[["Jason","squid"],["Marcel","sigma"]],"sessionData":[[{"player":"Jason","content":"tisch"},{"player":"Jason","content":{"images":["https://w7.pngwing.com/pngs/631/788/png-transparent-table-wood-tables-orange-table-illustration-angle-furniture-rectangle-thumbnail.png"],"imageTransform":[" translate(235px, 182px) "],"text":[],"textTransform":[]}}],[{"player":"Marcel","content":"stuhl"},{"player":"Marcel","content":{"images":["https://w7.pngwing.com/pngs/986/34/png-transparent-office-desk-chairs-swivel-chair-chair-angle-furniture-office-thumbnail.png"],"imageTransform":[" translate(231px, 135px) "],"text":[],"textTransform":[]}}]]}
-      //message = message1
+      message = message1
 
 
       for (let k = 0; k < message.sessionData.length; k++) {
