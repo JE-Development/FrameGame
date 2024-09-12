@@ -33,22 +33,6 @@
     <div v-if="!selfReady">
       <div class="center-horizontal">
         <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinishImage" color="line1" />
-        <FreeTransform
-            :x="0"
-            :y="0"
-            :scale-x="1"
-            :scale-y="1"
-            :width="100"
-            :height="100"
-            :angle="0"
-            :offset-x="0"
-            :offset-y="0"
-            @update="updateTransform($event)"
-        >
-          <div style="width: 50px; height: 50px; background: #5cf0ff">
-          </div>
-
-        </FreeTransform>
       </div>
       <div style="height: 20px"></div>
       <div class="center-horizontal">
@@ -67,6 +51,29 @@
       <div style="width: 200px"></div>
       <div class="canvas" v-if="reloadCanvas">
 
+        <div v-for="(imageUrl, index) in addedImages">
+          <img :class="'target' + index" :src="imageUrl" v-if="layerRender" @click="onImageFocus(index)"
+            :style="{ transform: imageTransform[index] }" />
+          <Moveable v-if="selectedImageIndex === index" className="moveable" v-bind:target="['.target' + index]"
+            v-bind:draggable="true" v-bind:scalable="true" v-bind:rotatable="true" @drag="onDrag($event, index)"
+            @scale="onScale($event, index)" @rotate="onRotate($event, index)" />
+        </div>
+
+        <div v-for="(text, index) in textList">
+          <div :class="'targettext' + index" @click="onTextFocus(index)" style="display: inline-block; font-size: 50px;"
+            :style="{ transform: textTransform[index] }">{{ text.text }}
+          </div>
+          <Moveable v-if="selectedTextIndex === index" className="moveable" v-bind:target="['.targettext' + index]"
+            v-bind:draggable="true" v-bind:scalable="true" v-bind:rotatable="true" @drag="onDragText($event, index)"
+            @scale="onScaleText($event, index)" @rotate="onRotateText($event, index)" />
+        </div>
+
+        <!--
+            <div v-for="(imageUrl, index) in loadImages" v-if="layerRender">
+          <img class="target" ref="target" :src="imageUrl"/>
+          <Moveable className="moveable" v-bind:target="['.target']" v-bind:draggable="true" v-bind:scalable="true"
+            v-bind:rotatable="true" @drag="onDrag" @scale="onScale" @rotate="onRotate" />
+        </div>
         <v-stage :config="stageConfig" @mousedown="handleMouseDown" @mousemove="handleMouseMove"
           @mouseup="handleMouseUp" ref="stage">
           <v-layer>
@@ -89,62 +96,32 @@
             }" @click="onText(index)" v-model="textTransform[index]" />
           </v-layer>
         </v-stage>
+      -->
       </div>
       <div style="width: 200px"></div>
       <LayerEditor :sampler="false" @up="onUp" @down="onDown" @delete="onDelete" :layers="addedImages"
         v-if="layerRender" />
     </div>
     <div style="height: 20px"></div>
-    <div class="center-horizontal" v-if="selectedImageIndex !== -1 || selectedTextIndex !== -1">
-      <div class="slider" v-if="supportText">
-        <div class="center-horizontal">
-          <h2 class="white">{{ lang.game.transformWidth }}</h2>
-        </div>
-        <vue-slider duration="0.2" :max="sliderMaxw" :min="0" ref="sliderw" @drag-start="dragStart" @drag-end="dragEnd"
-          @click="dragEnd" @change="dragChangew" tooltip="none"
-          :process-style="{ backgroundColor: '#00ff00' }"></vue-slider>
-      </div>
-      <div style="width: 20px"></div>
-      <div class="slider" v-if="supportText">
-        <div class="center-horizontal">
-          <h2 class="white">{{ lang.game.transformHeight }}</h2>
-        </div>
-        <vue-slider duration="0.2" :max="sliderMaxh" :min="0" ref="sliderh" @drag-start="dragStart" @drag-end="dragEnd"
-          @click="dragEnd" @change="dragChangeh" tooltip="none"
-          :process-style="{ backgroundColor: '#00ff00' }"></vue-slider>
-      </div>
-      <div style="width: 20px"></div>
-      <div class="slider">
-        <div class="center-horizontal">
-          <h2 class="white">{{ lang.game.transformSize }}</h2>
-        </div>
-        <vue-slider duration="0.2" :max="sliderMaxs" :min="0" ref="sliders" @drag-start="dragStart" @drag-end="dragEnd"
-          @click="dragEnd" @change="dragChanges" tooltip="none"
-          :process-style="{ backgroundColor: '#00ff00' }"></vue-slider>
-        <div style="height: 10px"></div>
-        <div class="center-horizontal">
-          <button class="layer-button center-horizontal" @click="onTextDelete" v-if="!supportText">
-            <img src="../assets/trash.png" class="layer-trash-image">
-          </button>
-        </div>
-      </div>
-      <div style="width: 20px"></div>
-      <div class="slider" v-if="supportText">
-        <div class="center-horizontal">
-          <h2 class="white">{{ lang.game.transformRotation }}</h2>
-        </div>
-        <vue-slider duration="0.2" :max="sliderMaxr" :min="0" ref="sliderr" @drag-start="dragStart" @drag-end="dragEnd"
-          @click="dragEnd" @change="dragChanger" tooltip="none"
-          :process-style="{ backgroundColor: '#00ff00' }"></vue-slider>
-      </div>
+    <div class="center-horizontal" v-if="this.selectedTextIndex > -1">
+      <button class="layer-button center-horizontal" @click="onTextDelete">
+        <img src="../assets/trash.png" class="layer-trash-image">
+      </button>
     </div>
   </div>
 
   <div v-if="mode === 2">
     <div class="center-horizontal" v-if="canvasRender">
       <div class="canvas" v-if="reloadCanvas">
-        <CanvasView :stageConfig="stageConfig" :loadedImages="loadedImages" :imageConfig="imageConfigForView(imageTransform)"
-          :textList="textList" :textTransform="textTransform" />
+        <div v-for="(imageUrl, index) in addedImages">
+          <img :class="'target' + index" :src="imageUrl" v-if="layerRender"
+            :style="{ transform: imageTransform[index] }" />
+        </div>
+        <div v-for="(text, index) in textList">
+          <div :class="'targettext' + index" style="display: inline-block; font-size: 50px;"
+            :style="{ transform: textTransform[index] }">{{ text.text }}
+          </div>
+        </div>
       </div>
     </div>
     <div class="center-horizontal">
@@ -171,25 +148,14 @@
       <div class="scroll" ref="scroll">
         <div v-for="(dat, index) in revealData" v-if="canvasRender">
 
-          <CanvasView :stageConfig="stageConfig" :loadedImages="dat.loadedImages"
-            :imageConfig="imageConfigForReveal(dat)" :textList="dat.image?.text"
+          <CanvasView :stageConfig="stageConfig" :loadedImages="dat.image?.images"
+            :imageConfig="dat.image?.imageTransform" :textList="dat.image?.text"
             :textTransform="dat.image?.textTransform" :prompt="dat.prompt" />
         </div>
 
       </div>
     </div>
   </div>
-  <div class="target" ref="target">Vue Moveable</div>
-  <Moveable
-      className="moveable"
-      v-bind:target="['.target']"
-      v-bind:draggable="true"
-      v-bind:scalable="true"
-      v-bind:rotatable="true"
-      @drag="onDrag"
-      @scale="onScale"
-      @rotate="onRotate"
-  />
 
 </template>
 
@@ -209,6 +175,7 @@ import { HttpRequest } from "@/components/code/HttpRequest";
 import CanvasView from "./views/CanvasView.vue";
 import PlayerLine from "./views/PlayerLine.vue";
 import Moveable from "vue3-moveable";
+import { transform } from "typescript";
 
 
 export default {
@@ -217,7 +184,7 @@ export default {
   data() {
     return {
       lang: langEN,
-      mode: 1,
+      mode: 0,
       selfReady: false,
       showISP: false,
       stageConfig: {
@@ -288,7 +255,6 @@ export default {
     //this.setRevealContent()
 
     //this.loadImage(this.image, this.imageConfig);
-    this.loadImages()
 
     if (this.getCookies("lang") === null || this.getCookies("lang") === "en") {
       this.lang = langEN
@@ -357,7 +323,6 @@ export default {
           }
           nextTick(() => {
             this.canvasRender = true
-            this.loadImages()
           })
         }
       } else if (message.func === "dataForImage") {
@@ -387,14 +352,24 @@ export default {
       this.send(dat)
     },
 
-    onDrag({ transform }) {
-      this.$refs.target.style.transform = transform;
+    onDrag({ transform }, index) {
+      this.imageTransform[index] = transform
     },
-    onScale({ drag }) {
-      this.$refs.target.style.transform = drag.transform;
+    onScale({ drag }, index) {
+      this.imageTransform[index] = drag.transform
     },
-    onRotate({ drag }) {
-      this.$refs.target.style.transform = drag.transform;
+    onRotate({ drag }, index) {
+      this.imageTransform[index] = drag.transform
+    },
+
+    onDragText({ transform }, index) {
+      this.textTransform[index] = transform
+    },
+    onScaleText({ drag }, index) {
+      this.textTransform[index] = drag.transform
+    },
+    onRotateText({ drag }, index) {
+      this.textTransform[index] = drag.transform
     },
 
     onClickFinishRating() {
@@ -405,6 +380,19 @@ export default {
         args: [this.$refs.promptRating.value, this.getCookies("username")]
       }
       this.send(dat)
+    },
+
+    onImageFocus(index) {
+      console.log("image focus")
+      this.selectedImageIndex = index
+      this.selectedTextIndex = -1
+    },
+
+    onTextFocus(index) {
+      console.log("text focus")
+      this.selectedTextIndex = index
+      this.selectedImageIndex = -1
+      console.log(this.selectedTextIndex)
     },
 
     onClickFinishImage() {
@@ -422,72 +410,38 @@ export default {
       this.send(dat)
     },
 
+    imageClicked(img) {
+      this.imageTransform.push("")
+      this.addedImages.push(img)
+      this.onImageFocus(this.addedImages.length - 1)
+      this.showISP = false
+      this.reloadCanvas = false
+      nextTick().then(() => {
+        this.reloadCanvas = true
+      })
+      //this.onSetDefault()
+
+      this.layerRender = false
+      nextTick(() => {
+        this.layerRender = true
+      })
+    },
+
+
     async setRevealContent(message1) {
-      //this.revealLine = ["Jason", "Marcel", "Enns"]
       this.canvasRender = false
-      let message =
-      {
-        func: 'finished',
-        line: ['Jason', 'Marcel', 'Enns'],
-        sessionData: [
-          [
-            { player: 'Jason', content: 'baum' },
-            {
-              player: 'Jason',
-              content: {
-                images: [
-
-                  'https://w7.pngwing.com/pngs/561/342/png-transparent-tree-large-green-tree-green-tree-illustration-leaf-branch-presentation-thumbnail.png'
-                ],
-                imageTransform: [{ width: 200, height: 200, rotation: 0 }],
-                text: [],
-                textTransform: []
-              }
-            },
-            { player: 'Jason', content: 'baum1' }
-          ],
-          [
-            { player: 'Marcel', content: 'haus' },
-            {
-              player: 'Marcel',
-              content: {
-                images: [
-
-                  'https://w7.pngwing.com/pngs/789/105/png-transparent-beige-house-with-manicured-lawn-house-home-apartment-house-building-apartment-room-thumbnail.png'
-                ],
-                imageTransform: [{ width: 200, height: 200, rotation: 0 }],
-                text: [],
-                textTransform: []
-              }
-            },
-            { player: 'Marcel', content: 'haus1' }
-          ],
-          [
-            { player: 'Enns', content: 'tisch' },
-            {
-              player: 'Enns',
-              content: {
-                images: [
-
-                  'https://w7.pngwing.com/pngs/631/788/png-transparent-table-wood-tables-orange-table-illustration-angle-furniture-rectangle-thumbnail.png'
-                ],
-                imageTransform: [{ width: 200, height: 200, rotation: 0 }],
-                text: [],
-                textTransform: []
-              }
-            },
-            { player: 'Enns', content: 'tisch1' }
-          ]
-        ]
-      }
-
-      message = message1
 
       this.mode = 3
       this.selfReady = false
 
       let comb = {}
       let arr = []
+
+
+
+
+      let message = { "func": "finished", "line": ["Jason", "Marcel", "Enns"], "sessionData": [[{ "player": "Jason", "content": "baum" }, { "player": "Jason", "content": { "images": ["https://w7.pngwing.com/pngs/114/380/png-transparent-emerald-ash-borer-tree-green-ash-graphy-shrub-baum-grass-ash-woody-plant-thumbnail.png"], "imageTransform": [" translate(234px, 141px) "], "text": [{ "text": "baum", "fontSize": 50 }], "textTransform": [" translate(308.5px, -332px) scale(3.51899, 1.86207)"] } }, { "player": "Jason", "content": "baum1" }], [{ "player": "Marcel", "content": "haus" }, { "player": "Marcel", "content": { "images": ["https://w7.pngwing.com/pngs/789/105/png-transparent-beige-house-with-manicured-lawn-house-home-apartment-house-building-apartment-room-thumbnail.png"], "imageTransform": [" translate(265px, 292px) "], "text": [{ "text": "hallo", "fontSize": 50 }, { "text": "haus", "fontSize": 50 }], "textTransform": [" translate(358.999px, 2.5px) scale(4.97573, 0.844828)", " translate(297px, -167px) rotate(111.041deg)"] } }, { "player": "Marcel", "content": "haus1" }], [{ "player": "Enns", "content": "tisch" }, { "player": "Enns", "content": { "images": ["https://image.shutterstock.com/image-photo/loket-czech-republic-260nw-1176283288.jpg", "https://w7.pngwing.com/pngs/631/788/png-transparent-table-wood-tables-orange-table-illustration-angle-furniture-rectangle-thumbnail.png"], "imageTransform": [" translate(224px, 246px) rotate(104.677deg)", " translate(282px, -77.5px) scale(1, 1.7714285714285714)"], "text": [{ "text": "house", "fontSize": 50 }, { "text": "table", "fontSize": 50 }], "textTransform": [" translate(111px, -90.5px) rotate(51.8571deg) scale(3.36358, 1.77586)", " translate(98.4997px, -478px) scale(2.74293, 2.55172)"] } }, { "player": "Enns", "content": "tisch1" }]] }
+      message = message1
 
 
       for (let k = 0; k < message.sessionData.length; k++) {
@@ -500,13 +454,6 @@ export default {
           this.currentRevealPlayer = sessionData[i].player
           if (isImage) {
             comb.image = sessionData[i].content
-            let loadedImages = []
-            for (let j = 0; j < sessionData[i].content.images.length; j++) {
-              let li = await this.loadImagesForReveal(sessionData[i].content.images[j])
-              loadedImages.push(li)
-            }
-            comb.loadedImages = loadedImages
-            console.log(comb.loadedImages)
             arr.push(comb)
           } else {
             comb.prompt = sessionData[i].content
@@ -540,21 +487,6 @@ export default {
       return new Promise(resolve => setTimeout(resolve, ms));
     },
 
-    loadSliderSettings() {
-      if (this.einmal) {
-        this.einmal = false
-        this.listening = false
-        nextTick(() => {
-          if (this.supportText) {
-            this.$refs.sliderw.setValue(this.sliderMaxw / 2)
-            this.$refs.sliderh.setValue(this.sliderMaxh / 2)
-            this.$refs.sliderr.setValue(this.sliderMaxr / 2)
-          }
-          this.$refs.sliders.setValue(this.sliderMaxs / 2)
-          this.listening = true
-        })
-      }
-    },
 
     closeISP() {
       this.showISP = false
@@ -564,105 +496,6 @@ export default {
       this.showISP = true
     },
 
-
-
-    imageConfig(index) {
-      if (this.imageTransform[index] === undefined) {
-        this.imageTransform[index] = {
-          width: 200,
-          height: 200,
-          rotation: 0,
-        };
-      }
-      return {
-        x: this.imageTransform[index] === undefined ? 100 : this.imageTransform[index].x,
-        y: this.imageTransform[index] === undefined ? 100 : this.imageTransform[index].y,
-        width: this.imageTransform[index].width,
-        height: this.imageTransform[index].height,
-        rotation: this.imageTransform[index].rotation,
-        draggable: true,
-        onDragMove: (event) => {
-          this.onImage(index)
-          this.imageTransform[index] = {
-            x: event.target.x(),
-            y: event.target.y(),
-            width: this.imageTransform[index].width,
-            height: this.imageTransform[index].height,
-            rotation: this.imageTransform[index].rotation
-          };
-        },
-      };
-    },
-
-    imageConfigForView(dat) {
-      let arr = []
-      if (dat !== undefined) {
-        for (let i = 0; i < dat.length; i++) {
-          let config = dat[i]
-          if (config === undefined) {
-            config = {
-              width: 200,
-              height: 200,
-              rotation: 0,
-            };
-          }
-          arr.push({
-            x: config === undefined ? 100 : config.x,
-            y: config === undefined ? 100 : config.y,
-            width: config.width,
-            height: config.height,
-            rotation: config.rotation,
-            draggable: false,
-            onDragMove: (event) => {
-              this.onImage(index)
-              config = {
-                x: event.target.x(),
-                y: event.target.y(),
-                width: config.width,
-                height: config.height,
-                rotation: config.rotation
-              };
-            },
-          })
-        }
-      }
-      return arr
-    },
-
-    imageConfigForReveal(dat) {
-      let arr = []
-      if (dat.image !== undefined) {
-        for (let i = 0; i < dat.image.imageTransform.length; i++) {
-          let config = dat.image.imageTransform[i]
-          if (config === undefined) {
-            config = {
-              width: 200,
-              height: 200,
-              rotation: 0,
-            };
-          }
-          arr.push({
-            x: config === undefined ? 100 : config.x,
-            y: config === undefined ? 100 : config.y,
-            width: config.width,
-            height: config.height,
-            rotation: config.rotation,
-            draggable: false,
-            onDragMove: (event) => {
-              this.onImage(index)
-              config = {
-                x: event.target.x(),
-                y: event.target.y(),
-                width: config.width,
-                height: config.height,
-                rotation: config.rotation
-              };
-            },
-          })
-        }
-      }
-      return arr
-    },
 
     increaseProgress() {
       if (this.progress < 100) {
@@ -677,42 +510,6 @@ export default {
     },
 
 
-
-    handleMouseDown() {
-
-    },
-    handleMouseMove() {
-
-    },
-    handleMouseUp() {
-
-    },
-
-    loadImages() {
-      // Iteriere durch die Bild-URLs und lade jedes Bild
-      this.addedImages.forEach((imageUrl, index) => {
-        const img = new Image();
-        img.onload = () => {
-          this.loadedImages[index] = img;
-
-        };
-        img.src = imageUrl;
-      });
-    },
-
-    loadImagesForReveal(imageUrl) {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
-          // Wenn das Bild geladen ist, wird es in loadedImages gespeichert
-          resolve(img); // Das Bild wird im Promise als Rückgabewert übergeben
-        };
-        img.onerror = (error) => {
-          reject(new Error(`Bild konnte nicht geladen werden: ${imageUrl}`));
-        };
-        img.src = imageUrl; // Startet den Bildladevorgang
-      });
-    },
 
     onUp(index) {
       if (index !== this.addedImages.length - 1) {
@@ -758,6 +555,7 @@ export default {
       nextTick(() => {
         this.layerRender = true
       })
+      this.selectedTextIndex = -1
     },
 
 
@@ -771,134 +569,6 @@ export default {
       return updated
     },
 
-    imageClicked(img) {
-      this.addedImages.push(img)
-      this.selectedImageIndex = this.addedImages.length - 1
-      this.showISP = false
-      this.reloadCanvas = false
-      nextTick().then(() => {
-        this.reloadCanvas = true
-      })
-      this.loadImages()
-      this.onSetDefault()
-
-      this.layerRender = false
-      nextTick(() => {
-        this.layerRender = true
-      })
-    },
-
-    onImage(index) {
-      this.selectedImageIndex = index;
-      this.selectedTextIndex = -1;
-      this.supportText = true
-      this.loadSliderSettings()
-    },
-
-    onText(index) {
-      this.selectedTextIndex = index;
-      this.selectedImageIndex = -1;
-      this.supportText = false
-      this.loadSliderSettings()
-    },
-
-    dragStart() {
-      this.onSetDefault()
-    },
-
-    onSetDefault() {
-      if (this.supportText) {
-        this.valW = this.imageTransform[this.selectedImageIndex] === undefined ? 200 : this.imageTransform[this.selectedImageIndex].width
-        this.valH = this.imageTransform[this.selectedImageIndex] === undefined ? 200 : this.imageTransform[this.selectedImageIndex].height
-        this.valR = this.imageTransform[this.selectedImageIndex] === undefined ? 200 : this.imageTransform[this.selectedImageIndex].rotation
-      } else {
-        this.valT = this.textList[this.selectedTextIndex] === undefined ? 200 : this.textList[this.selectedTextIndex].fontSize
-      }
-    },
-
-    dragEnd() {
-      this.listening = false
-      if (this.supportText) {
-        this.$refs.sliderw.setValue(this.sliderMaxw / 2)
-        this.$refs.sliderh.setValue(this.sliderMaxh / 2)
-        this.$refs.sliders.setValue(this.sliderMaxs / 2)
-        this.$refs.sliderr.setValue(this.sliderMaxr / 2)
-      } else {
-        this.$refs.sliders.setValue(this.sliderMaxs / 2)
-      }
-      this.listening = true
-      this.onSetDefault()
-    },
-
-    dragChangew(value) {
-      if (this.listening && this.selectedImageIndex !== -1) {
-        if (this.imageTransform[this.selectedImageIndex] !== undefined) {
-          let val = value - (this.sliderMaxw / 2)
-          this.imageTransform[this.selectedImageIndex].width = val + this.valW
-          this.reloadCanvas = false
-          nextTick().then(() => {
-            this.reloadCanvas = true
-          })
-          this.loadImages()
-        }
-      }
-    },
-
-    dragChangeh(value) {
-      if (this.listening && this.selectedImageIndex !== -1) {
-        if (this.imageTransform[this.selectedImageIndex] !== undefined) {
-          let val = value - (this.sliderMaxh / 2)
-          this.imageTransform[this.selectedImageIndex].height = val + this.valH
-          this.reloadCanvas = false
-          nextTick().then(() => {
-            this.reloadCanvas = true
-          })
-          this.loadImages()
-        }
-      }
-    },
-
-    dragChanges(value) {
-      if (this.listening) {
-        if (this.selectedImageIndex !== -1) {
-          if (this.imageTransform[this.selectedImageIndex] !== undefined) {
-            let val = value - (this.sliderMaxw / 2)
-            this.imageTransform[this.selectedImageIndex].width = val + this.valW
-            this.imageTransform[this.selectedImageIndex].height = val + this.valH
-            this.reloadCanvas = false
-            nextTick().then(() => {
-              this.reloadCanvas = true
-            })
-            this.loadImages()
-          }
-        } else {
-          if (this.textList[this.selectedTextIndex] !== undefined) {
-            let val = value - (this.sliderMaxs / 2)
-            this.textList[this.selectedTextIndex].fontSize = val + this.valT
-            this.reloadCanvas = false
-            nextTick().then(() => {
-              this.reloadCanvas = true
-            })
-            this.loadImages()
-          }
-        }
-      }
-    },
-
-    dragChanger(value) {
-      if (this.listening && this.selectedImageIndex !== -1) {
-        if (this.imageTransform[this.selectedImageIndex] !== undefined) {
-          let val = value - (this.sliderMaxr / 2)
-          this.imageTransform[this.selectedImageIndex].rotation = val + this.valR
-          this.reloadCanvas = false
-          nextTick().then(() => {
-            this.reloadCanvas = true
-          })
-          this.loadImages()
-        }
-      }
-    },
-
     getImageAsBase64() {
 
       let data = {
@@ -907,20 +577,6 @@ export default {
         args: [this.addedImages[this.selectedImageIndex]]
       }
       this.send(data)
-
-      /*
-      const imageUrl = this.loadedImages[this.selectedImageIndex]
-
-      this.imageToBase64(imageUrl)
-          .then((base64) => {
-            let http = new HttpRequest()
-            let b64 = String(base64).split(",")[1]
-            console.log(b64)
-            http.httpRequestPost("http://jasonbackend.de:8000/upload", "image", b64)
-          })
-          .catch((error) => {
-            console.error('Error loading image:', error);
-          });*/
     },
 
     imageToBase64(url) {
@@ -952,14 +608,12 @@ export default {
         fontSize: this.valT
       }
       this.textList.push(dat)
-      this.selectedTextIndex = this.addedImages.length - 1
+      this.onTextFocus(this.textList.length - 1)
       this.reloadCanvas = false
       nextTick().then(() => {
         this.reloadCanvas = true
       })
-      this.loadImages()
       this.closeText()
-      this.onSetDefault()
 
       this.layerRender = false
       nextTick(() => {

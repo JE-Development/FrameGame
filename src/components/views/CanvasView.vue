@@ -1,31 +1,17 @@
 <template>
-  <!--<button @click="showContent">Show Content</button>-->
-
   <div class="reveal-canvas" v-if="prompt === undefined">
-    <v-stage :config="stageConfig" ref="stage">
-      <v-layer>
-        <v-image v-for="(imageUrl, index) in sortedLoaded" :key="index" :image="imageUrl" :config="imageConfig[index]" />
-        <v-text v-for="(text, index) in textList" :config="{
-          text: text.text,
-          x: this.textTransform[index] === undefined ? 50 : this.textTransform[index].x,
-          y: this.textTransform[index] === undefined ? 50 : this.textTransform[index].y,
-          draggable: false,
-          fill: 'black',
-          fontSize: text.fontSize,
-          onDragMove: (event) => {
-            this.onText(index)
-            this.textTransform[index] = {
-              x: event.target.x(),
-              y: event.target.y(),
-            };
-          },
-        }" />
-      </v-layer>
-    </v-stage>
+    <div v-for="(imageUrl, index) in loadedImages">
+      <img :class="'target' + index" :src="imageUrl" :style="{ transform: imageConfig[index] }" />
+    </div>
+    <div v-for="(text, index) in textList">
+      <div :class="'targettext' + index" style="display: inline-block; font-size: 50px;"
+        :style="{ transform: textTransform[index] }">{{ text.text }}
+      </div>
+    </div>
   </div>
   <div class="center white-background" style="width: 800px;" v-else>
     <h2 class="text-center" style="margin-top: 5px; margin-bottom: 5px">{{ prompt }}</h2>
-  </div>
+    </div>
 </template>
 
 

@@ -72,6 +72,7 @@
     width: 800px;
     height: 600px;
     background: #ffffff;
+    overflow: hidden;
 }
 
 .reveal-canvas{
