@@ -109,14 +109,6 @@ export default {
       this.unableMessage = ""
       this.allowJoin = true
 
-      let dat = {
-        type: "register",
-        func: "removePlayer",
-        player: this.getCookies("username"),
-        pb: this.getCookies("pb")
-      }
-      this.socket.send(JSON.stringify(dat));
-
       const message = {
         type: "ping",
         func: "selfExist",
