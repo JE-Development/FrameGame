@@ -12,6 +12,7 @@
     "serverDown": "Der FrameGame Server ist offline",
     "noUsername": "Du musst einen Nutzernamen festlegen",
     "gameStarted": "Spiel ist bereits gestartet",
+    "usernameExist": "Der Nutzername existiert in diesem Raum bereits",
     "noRoomCode": "Du musst ein Raumcode eingeben oder ein Raum erstellen"
   },
   "playerPage": {
@@ -28,6 +29,7 @@
     "heartErrorWrongNumber": "Der Wert für die Herzenanzahl darf nicht kleiner als '1' sein.",
     "heartErrorEmpty": "Das Textfeld für die Herzenanzahl darf nicht leer sein.",
     "needMorePlayers": "Du brauchst mindestens 2 Spieler.",
+    "closedByUser": "Der Raum wurde geschlossen, weil ein Spieler das Spiel verlassen hat",
     "joinLink": "Link anzeigen"
   },
   "game": {
@@ -37,12 +39,14 @@
     "searchButton": "Suchen",
     "addButton": "Hinzufügen",
     "finishedPromptButton": "Fertig",
+    "cancelFinishedButton": "Bearbeiten",
     "searchImagesButton": "Suche nach Bilder",
     "addTextButton": "Text hinzufügen",
     "transformWidth": "Breite",
     "transformHeight": "Höhe",
     "transformSize": "Größe",
     "restartGame": "Nochmal spielen",
+    "stopGame": "Spiel stoppen",
     "transformRotation": "Drehung"
   },
   "jwc": {

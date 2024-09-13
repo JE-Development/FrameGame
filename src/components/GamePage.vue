@@ -5,6 +5,7 @@
   <ImageSearchPopup :show="showISP" @close="closeISP" @img="imageClicked" />
   <AddTextPopup :show="showTextPopup" @close="closeText" @text="addedText" />
 
+
   <div class="center-horizontal" v-if="mode !== 3">
     <div style="width: 80%;">
       <PlayerLine v-for="dat in names" :name="dat.name" :img="dat.pb" :selected="dat.ready" />
@@ -14,6 +15,13 @@
     <div class="center-horizontal">
       <UIButton :title="lang.game.restartGame" @click="onClickRestart" color="line1" />
     </div>
+  </div>
+
+  <div class="center-horizontal" v-if="isHost">
+    <UIButton :title="lang.game.stopGame" @click="onClickStop" color="prim-color-background" />
+  </div>
+  <div class="center-horizontal" v-else>
+    <UIButton :title="lang.playerPage.leaveButton" @click="onClickLeave" color="prim-color-background" />
   </div>
 
   <div v-if="mode === 0">
@@ -65,6 +73,12 @@
           <UIButton :title="lang.game.addTextButton" @click="onTextClicked" :disabled="selfReady"
             color="prim-color-background" />
         </div>
+      </div>
+    </div>
+    <div v-else>
+      <div class="center-horizontal">
+        <UIButton :title="lang.game.cancelFinishedButton" @click="onClickCancelFinish"
+          color="line1" />
       </div>
     </div>
     <div style="height: 20px"></div>
@@ -348,7 +362,13 @@ export default {
             this.names[i].ready = true
           }
         }
-      } else if (message.func === "everyoneUnready") {
+      } else if (message.func === "playerNotReady") {
+        for (let i = 0; i < this.names.length; i++) {
+          if (this.names[i].name === message.player) {
+            this.names[i].ready = false
+          }
+        }
+      }else if (message.func === "everyoneUnready") {
         for (let i = 0; i < this.names.length; i++) {
           this.names[i].ready = false
         }
@@ -405,6 +425,11 @@ export default {
         if (!message.exist) {
           this.$router.push("/")
         }
+      } else if (message.func === "stop") {
+        if(!message.stopByHost){
+          this.setCookies("showPlayerStopToast", "true")
+        }
+        this.$router.push("/player")
       } else if (message.func === "allPlayers") {
         if (message.players.length === 0) {
           this.$router.push("/")
@@ -453,6 +478,18 @@ export default {
         func: "restartGame"
       }
       this.send(dat)
+    },
+
+    onClickLeave() {
+      let dat = {
+        type: "register",
+        func: "removePlayer",
+        player: this.getCookies("username"),
+        pb: this.getCookies("pb")
+      }
+      this.send(dat)
+      this.stopGame(false)
+      this.$router.push("/")
     },
 
     onDrag({ transform }, index) {
@@ -513,6 +550,16 @@ export default {
       this.send(dat)
     },
 
+    onClickCancelFinish(){
+      this.selfReady = false
+      let dat = {
+        type: "engine",
+        func: "cancelReadyImage",
+        args: [this.getCookies("username")]
+      }
+      this.send(dat)
+    },
+
     imageClicked(img) {
       this.imageTransform.push("")
       this.addedImages.push(img)
@@ -543,8 +590,8 @@ export default {
 
 
 
-      let message = {"func":"finished","line":[["Jason","squid"],["Marcel","sigma"]],"sessionData":[[{"player":"Jason","content":"tisch"},{"player":"Jason","content":{"images":["https://w7.pngwing.com/pngs/631/788/png-transparent-table-wood-tables-orange-table-illustration-angle-furniture-rectangle-thumbnail.png"],"imageTransform":[" translate(235px, 182px) "],"text":[],"textTransform":[]}}],[{"player":"Marcel","content":"stuhl"},{"player":"Marcel","content":{"images":["https://w7.pngwing.com/pngs/986/34/png-transparent-office-desk-chairs-swivel-chair-chair-angle-furniture-office-thumbnail.png"],"imageTransform":[" translate(231px, 135px) "],"text":[],"textTransform":[]}}]]}
-      //message = message1
+      let message = { "func": "finished", "line": [["Jason", "squid"], ["Marcel", "sigma"]], "sessionData": [[{ "player": "Jason", "content": "tisch" }, { "player": "Jason", "content": { "images": ["https://w7.pngwing.com/pngs/631/788/png-transparent-table-wood-tables-orange-table-illustration-angle-furniture-rectangle-thumbnail.png"], "imageTransform": [" translate(235px, 182px) "], "text": [], "textTransform": [] } }], [{ "player": "Marcel", "content": "stuhl" }, { "player": "Marcel", "content": { "images": ["https://w7.pngwing.com/pngs/986/34/png-transparent-office-desk-chairs-swivel-chair-chair-angle-furniture-office-thumbnail.png"], "imageTransform": [" translate(231px, 135px) "], "text": [], "textTransform": [] } }]] }
+      message = message1
 
 
       for (let k = 0; k < message.sessionData.length; k++) {
@@ -756,6 +803,19 @@ export default {
       return array
     },
 
+    onClickStop() {
+      this.stopGame(true)
+    },
+
+    stopGame(stopByHost){
+      let dat = {
+        type: "engine",
+        func: "stop",
+        args: [stopByHost]
+      }
+      this.send(dat)
+    },
+
 
 
 
@@ -771,7 +831,22 @@ export default {
       return this.$cookies.set(key, value, 2147483647);
     },
     eventClose() {
-      this.socket.close()
+      if (this.isHost) {
+        let dat = {
+          type: "engine",
+          func: "kill"
+        }
+        this.send(dat)
+      }else{
+        let dat = {
+          type: "register",
+          func: "removePlayer",
+          player: this.getCookies("username"),
+          pb: this.getCookies("pb")
+        }
+        this.send(dat);
+        this.stopGame(false)
+      }
     },
   }
 }

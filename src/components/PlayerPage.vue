@@ -2,6 +2,10 @@
 
   <BackgroundView />
 
+  <transition name="toast">
+    <Toast color="red" :text="unableMessage" v-if="showToast" style="z-index: 9999;"/>
+  </transition>
+
   <div class="center-horizontal" v-if="isHost">
     <div class="center-horizontal">
       <div class="absolute">
@@ -49,10 +53,11 @@ import langDE from "../assets/langDE.json"
 import langEN from "../assets/langEN.json"
 import UIButton from "@/components/views/UIButton.vue";
 import BackgroundView from "./views/BackgroundView.vue";
+import Toast from "./views/Toast.vue";
 
 export default {
   name: "PlayerPage",
-  components: { UIButton, PlayerView, BackgroundView },
+  components: { UIButton, PlayerView, BackgroundView, Toast },
   data() {
     return {
       names: [],
@@ -61,7 +66,9 @@ export default {
       baseURI: "",
       pb: [],
       errorText: "",
-      lang: langEN
+      lang: langEN,
+      showToast: false,
+      unableMessage: ""
     };
   },
 
@@ -82,6 +89,12 @@ export default {
     }
 
     window.addEventListener('beforeunload', this.eventClose);
+
+    if(this.getCookies("showPlayerStopToast") === "true"){
+      this.setCookies("showPlayerStopToast", "false")
+      this.unableMessage = this.lang.playerPage.closedByUser
+      this.displayToast()
+    }
 
 
     this.socket = new WebSocket(import.meta.env.VITE_SERVER_URL);
@@ -156,6 +169,13 @@ export default {
         if (!message.exist) {
           this.$router.push("/")
         }
+      }else if (message.func === "ping") {
+        let dat = {
+          type: "ping",
+          func: "replyPing",
+          id: message.id
+        }
+        this.send(dat)
       }
     });
 
@@ -240,6 +260,13 @@ export default {
         args: [mode]
       }
       this.send(dat)
+    },
+
+    displayToast() {
+      this.showToast = true
+      setTimeout(() => {
+        this.showToast = false
+      }, 4000)
     },
 
 

@@ -119,7 +119,8 @@ export default {
 
       const message = {
         type: "ping",
-        func: "isStarted"
+        func: "selfExist",
+        name: this.getCookies("username")
       };
       this.socket.send(JSON.stringify(message));
 
