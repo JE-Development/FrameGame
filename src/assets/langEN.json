@@ -39,6 +39,7 @@
     "searchButton": "Search",
     "addButton": "Add",
     "finishedPromptButton": "Finish",
+    "waitingReady": "Waiting for other players",
     "cancelFinishedButton": "Edit canvas",
     "searchImagesButton": "Search for images",
     "addTextButton": "Add text",

@@ -39,6 +39,7 @@
     "searchButton": "Suchen",
     "addButton": "Hinzufügen",
     "finishedPromptButton": "Fertig",
+    "waitingReady": "Warte bis alle Spieler bereit sind",
     "cancelFinishedButton": "Bearbeiten",
     "searchImagesButton": "Suche nach Bilder",
     "addTextButton": "Text hinzufügen",

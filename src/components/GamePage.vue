@@ -34,7 +34,7 @@
           <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinish" color="prim-color-background" />
         </div>
         <div class="center-horizontal" v-else>
-          <h2 class="white">Warte bis alle Spieler bereit sind</h2>
+          <h2 class="white">{{lang.game.waitingReady}}</h2>
         </div>
       </div>
     </div>
@@ -173,7 +173,7 @@
             color="prim-color-background" />
         </div>
         <div class="center-horizontal" v-else>
-          <h2>Warte bis alle Spieler bereit sind</h2>
+          <h2>{{lang.game.waitingReady}}</h2>
         </div>
       </div>
     </div>
