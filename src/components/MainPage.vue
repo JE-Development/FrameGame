@@ -142,8 +142,6 @@ export default {
       } else if (message.func === "noRc") {
         this.unableMessage = this.lang.register.wrongRoomCode
         this.setCookies("host", "false")
-        this.setCookies("rc", this.$refs.passinput.value)
-        this.join(this.$refs.passinput.value)
       } else if (message.func === "roomClosed") {
         this.$notify(this.lang.misc.roomClosed)
       }
@@ -170,22 +168,9 @@ export default {
         if (this.clicked) {
           if (this.checkUsername()) {
             this.setCookies("host", "false")
-            this.setCookies("rc", this.$refs.passinput.value)
-            this.join(this.$refs.passinput.value)
           }
         }
       }
-    },
-
-    addPlayer(rc) {
-      const message = {
-        type: "register",
-        func: "addPlayer",
-        player: this.getCookies("username"),
-        pb: this.getCookies("pb"),
-        rc: rc
-      };
-      this.socket.send(JSON.stringify(message));
     },
 
     hostPlayer(rc) {
@@ -194,20 +179,12 @@ export default {
         func: "addPlayerCreator",
         player: this.getCookies("username"),
         pb: this.getCookies("pb"),
-        rc: rc
+        rc: this.getCookies("rc")
       };
       this.socket.send(JSON.stringify(message));
     },
 
-    join(rc) {
-      this.unableMessage = ""
-
-      this.addPlayer(rc)
-
-
-    },
-
-    createJoin(rc) {
+    createJoin() {
       this.unableMessage = ""
 
       let username = this.$refs.usernameinput.value
@@ -217,7 +194,7 @@ export default {
 
       this.setCookies("username", username)
 
-      this.hostPlayer(rc)
+      this.hostPlayer()
       this.$router.push('/player');
 
     },
@@ -227,18 +204,16 @@ export default {
         return true
       } else {
         this.unableMessage = this.lang.register.noUsername
+        this.displayToast()
         this.setCookies("host", "false")
-        this.setCookies("rc", this.$refs.passinput.value)
-        this.join(this.$refs.passinput.value)
       }
       return false
     },
 
     joinUnable() {
       this.unableMessage = this.lang.register.gameStarted
+      this.displayToast()
       this.setCookies("host", "false")
-      this.setCookies("rc", this.$refs.passinput.value)
-      this.join(this.$refs.passinput.value)
     },
 
     getCookies(key) {
@@ -297,7 +272,7 @@ export default {
           this.setCookies("host", "true")
           let rc = this.getRandomNumbers()
           this.setCookies("rc", rc)
-          this.createJoin(rc)
+          this.createJoin()
         } else {
           this.unableMessage = this.lang.register.serverDown
           this.displayToast()

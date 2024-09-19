@@ -28,7 +28,7 @@
     "heartErrorNaN": "Der Wert für die Herzenanzahl ist ungültig.",
     "heartErrorWrongNumber": "Der Wert für die Herzenanzahl darf nicht kleiner als '1' sein.",
     "heartErrorEmpty": "Das Textfeld für die Herzenanzahl darf nicht leer sein.",
-    "needMorePlayers": "Du brauchst mindestens 2 Spieler.",
+    "needMorePlayers": "Du brauchst mindestens 3 Spieler.",
     "closedByUser": "Der Raum wurde geschlossen, weil ein Spieler das Spiel verlassen hat",
     "joinLink": "Link anzeigen"
   },

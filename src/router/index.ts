@@ -6,6 +6,7 @@ import JoinWithCode from "../components/JoinWithCode.vue";
 import GamePage from "@/components/GamePage.vue";
 import PublicPage from "@/components/PublicPage.vue";
 import Sample from "@/components/Sample.vue";
+import InstructionPage from '@/components/InstructionPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -37,6 +38,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/sample',
         name: 'Sample',
         component: Sample
+    },
+    {
+        path: '/instruction',
+        name: 'Instruction',
+        component: InstructionPage
     },
 
 ]

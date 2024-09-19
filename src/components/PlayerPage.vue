@@ -35,7 +35,6 @@
         <h2>{{ lang.playerPage.visibility }}</h2>
         <input type="checkbox" class="check-box" ref="vis" checked @click="visClicked">
       </div>
-      <h2 class="red">{{ errorText }}</h2>
     </div>
   </div>
   <div v-else class="center-horizontal">
@@ -65,7 +64,6 @@ export default {
       socket: null,
       baseURI: "",
       pb: [],
-      errorText: "",
       lang: langEN,
       showToast: false,
       unableMessage: ""
@@ -193,14 +191,15 @@ export default {
     },
 
     onClickStart() {
-      if (this.names.length > 0) {
+      if (this.names.length > 2) {
         let dat = {
           type: "engine",
           func: "start",
         }
         this.send(dat);
       } else {
-        this.errorText = this.lang.playerPage.needMorePlayers
+        this.unableMessage = this.lang.playerPage.needMorePlayers
+        this.displayToast()
       }
     },
 

@@ -28,7 +28,7 @@
     "heartErrorNaN": "The value for the heart count is invalid.",
     "heartErrorWrongNumber": "The value for the heart count must not be less than '1'.",
     "heartErrorEmpty": "The text field for the heart count is empty!",
-    "needMorePlayers": "You need at least 2 players.",
+    "needMorePlayers": "You need at least 3 players.",
     "closedByUser": "The room was closed, because a playre leaved the game",
     "joinLink": "show URL"
   },
