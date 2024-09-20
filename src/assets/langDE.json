@@ -46,6 +46,8 @@
     "transformSize": "Größe",
     "restartGame": "Nochmal spielen",
     "stopGame": "Spiel stoppen",
+    "waitReady": "Warte bis alle Spieler bereit sind",
+    "notSupportedScreen": "Your screen size ist not optimized. There will be issues.",
     "transformRotation": "Drehung"
   },
   "jwc": {

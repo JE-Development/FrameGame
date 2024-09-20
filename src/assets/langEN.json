@@ -28,6 +28,8 @@
     "heartErrorWrongNumber": "The value for the heart count must not be less than '1'.",
     "heartErrorEmpty": "The text field for the heart count is empty!",
     "needMorePlayers": "You need at least 2 players.",
+    "waitReady": "Wait until all players are ready",
+    "closedByUser": "The room was closed, because a player left the game",
     "joinLink": "show URL"
   },
   "game": {
