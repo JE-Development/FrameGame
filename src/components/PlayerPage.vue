@@ -2,10 +2,6 @@
 
   <BackgroundView />
 
-  <transition name="toast">
-    <Toast color="red" :text="unableMessage" v-if="showToast" style="z-index: 9999;"/>
-  </transition>
-
   <div class="center-horizontal" v-if="isHost">
     <div class="center-horizontal">
       <div class="absolute">
@@ -35,6 +31,7 @@
         <h2>{{ lang.playerPage.visibility }}</h2>
         <input type="checkbox" class="check-box" ref="vis" checked @click="visClicked">
       </div>
+      <h2 class="red">{{ errorText }}</h2>
     </div>
   </div>
   <div v-else class="center-horizontal">
@@ -52,11 +49,10 @@ import langDE from "../assets/langDE.json"
 import langEN from "../assets/langEN.json"
 import UIButton from "@/components/views/UIButton.vue";
 import BackgroundView from "./views/BackgroundView.vue";
-import Toast from "./views/Toast.vue";
 
 export default {
   name: "PlayerPage",
-  components: { UIButton, PlayerView, BackgroundView, Toast },
+  components: { UIButton, PlayerView, BackgroundView },
   data() {
     return {
       names: [],
@@ -64,9 +60,8 @@ export default {
       socket: null,
       baseURI: "",
       pb: [],
-      lang: langEN,
-      showToast: false,
-      unableMessage: ""
+      errorText: "",
+      lang: langEN
     };
   },
 
@@ -87,12 +82,6 @@ export default {
     }
 
     window.addEventListener('beforeunload', this.eventClose);
-
-    if(this.getCookies("showPlayerStopToast") === "true"){
-      this.setCookies("showPlayerStopToast", "false")
-      this.unableMessage = this.lang.playerPage.closedByUser
-      this.displayToast()
-    }
 
 
     this.socket = new WebSocket(import.meta.env.VITE_SERVER_URL);
@@ -167,13 +156,6 @@ export default {
         if (!message.exist) {
           this.$router.push("/")
         }
-      }else if (message.func === "ping") {
-        let dat = {
-          type: "ping",
-          func: "replyPing",
-          id: message.id
-        }
-        this.send(dat)
       }
     });
 
@@ -191,15 +173,14 @@ export default {
     },
 
     onClickStart() {
-      if (this.names.length > 2) {
+      if (this.names.length > 0) {
         let dat = {
           type: "engine",
           func: "start",
         }
         this.send(dat);
       } else {
-        this.unableMessage = this.lang.playerPage.needMorePlayers
-        this.displayToast()
+        this.errorText = this.lang.playerPage.needMorePlayers
       }
     },
 
@@ -259,13 +240,6 @@ export default {
         args: [mode]
       }
       this.send(dat)
-    },
-
-    displayToast() {
-      this.showToast = true
-      setTimeout(() => {
-        this.showToast = false
-      }, 4000)
     },
 
 

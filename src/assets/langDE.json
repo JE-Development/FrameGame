@@ -12,7 +12,6 @@
     "serverDown": "Der FrameGame Server ist offline",
     "noUsername": "Du musst einen Nutzernamen festlegen",
     "gameStarted": "Spiel ist bereits gestartet",
-    "usernameExist": "Der Nutzername existiert in diesem Raum bereits",
     "noRoomCode": "Du musst ein Raumcode eingeben oder ein Raum erstellen"
   },
   "playerPage": {
@@ -40,7 +39,6 @@
     "searchButton": "Suchen",
     "addButton": "Hinzufügen",
     "finishedPromptButton": "Fertig",
-    "cancelFinishedButton": "Bearbeiten",
     "searchImagesButton": "Suche nach Bilder",
     "addTextButton": "Text hinzufügen",
     "transformWidth": "Breite",
@@ -48,7 +46,6 @@
     "transformSize": "Größe",
     "restartGame": "Nochmal spielen",
     "stopGame": "Spiel stoppen",
-    "notSupportedScreen": "Deine Bildschirmgröße ist nicht optimiert. Es kann zu Problemen führen.",
     "transformRotation": "Drehung"
   },
   "jwc": {

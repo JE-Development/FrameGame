@@ -12,7 +12,6 @@
     "serverDown": "The FrameGame server is down",
     "noUsername": "You have to choose an username",
     "gameStarted": "Game already started",
-    "usernameExist": "The username in this room already exist",
     "noRoomCode": "You have to enter a room code or create a room"
   },
   "playerPage": {
@@ -28,8 +27,7 @@
     "heartErrorNaN": "The value for the heart count is invalid.",
     "heartErrorWrongNumber": "The value for the heart count must not be less than '1'.",
     "heartErrorEmpty": "The text field for the heart count is empty!",
-    "needMorePlayers": "You need at least 3 players.",
-    "closedByUser": "The room was closed, because a playre leaved the game",
+    "needMorePlayers": "You need at least 2 players.",
     "joinLink": "show URL"
   },
   "game": {
@@ -39,7 +37,6 @@
     "searchButton": "Search",
     "addButton": "Add",
     "finishedPromptButton": "Finish",
-    "cancelFinishedButton": "Edit canvas",
     "searchImagesButton": "Search for images",
     "addTextButton": "Add text",
     "transformWidth": "Width",
