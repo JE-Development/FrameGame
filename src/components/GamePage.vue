@@ -1,3 +1,15 @@
+<style>
+.not-optimized-screen {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  .not-optimized-screen {
+    display: inline-block;
+  }
+}
+</style>
+
 <template>
 
   <BackgroundView />
@@ -5,6 +17,14 @@
   <ImageSearchPopup :show="showISP" @close="closeISP" @img="imageClicked" />
   <AddTextPopup :show="showTextPopup" @close="closeText" @text="addedText" />
 
+  <div class="not-optimized-screen max-width">
+    <div class="center-horizontal max-width">
+    <h4 style="margin-top: 0px; margin-bottom: 0px;" class="text-center white">
+      {{ lang.game.notSupportedScreen }}
+    </h4>
+
+  </div>
+  </div>
 
   <div class="center-horizontal" v-if="mode !== 3">
     <div style="width: 80%;">
@@ -34,7 +54,7 @@
           <UIButton :title="lang.game.finishedPromptButton" @click="onClickFinish" color="prim-color-background" />
         </div>
         <div class="center-horizontal" v-else>
-          <h2 class="white">Warte bis alle Spieler bereit sind</h2>
+          <h2 class="white">{{ lang.game.waitReady }}</h2>
         </div>
       </div>
     </div>
@@ -63,7 +83,7 @@
       </div>
     -->
       <div style="height: 20px"></div>
-      <div class="center-horizontal">
+      <div class="center-mobile">
         <div class="center-horizontal">
           <UIButton :title="lang.game.searchImagesButton" @click="onClickSearch" :disabled="selfReady"
             color="prim-color-background" />
@@ -77,8 +97,7 @@
     </div>
     <div v-else>
       <div class="center-horizontal">
-        <UIButton :title="lang.game.cancelFinishedButton" @click="onClickCancelFinish"
-          color="line1" />
+        <UIButton :title="lang.game.cancelFinishedButton" @click="onClickCancelFinish" color="line1" />
       </div>
     </div>
     <div style="height: 20px"></div>
@@ -136,9 +155,11 @@
       -->
       </div>
       <div style="width: 200px"></div>
-      <LayerEditor :sampler="false" @up="onUp" @down="onDown" @delete="onDelete" :layers="addedImages"
-        v-if="layerRender && !selfReady" />
-      <LayerEditor :sampler="true" @up="onUp" @down="onDown" @delete="onDelete" :layers="addedImages" v-else />
+      <div class="mobile-layer-layout">
+        <LayerEditor :sampler="false" @up="onUp" @down="onDown" @delete="onDelete" :layers="addedImages"
+          v-if="layerRender && !selfReady" />
+        <LayerEditor :sampler="true" @up="onUp" @down="onDown" @delete="onDelete" :layers="addedImages" v-else />
+      </div>
     </div>
     <div style="height: 20px"></div>
     <div class="center-horizontal" v-if="this.selectedTextIndex > -1">
@@ -173,19 +194,23 @@
             color="prim-color-background" />
         </div>
         <div class="center-horizontal" v-else>
-          <h2>Warte bis alle Spieler bereit sind</h2>
+          <h2>{{ lang.game.waitReady }}</h2>
         </div>
       </div>
     </div>
   </div>
   <div v-if="mode === 3">
-    <div class="center-horizontal">
-      <div>
+    <div class="mobile-reveal-center">
+      <div class="mobile-reveal-desktop">
         <PlayerView v-for="dat in revealLine" :name="dat[0]" :img="dat[1]"
           :selected="dat[0] === this.currentRevealPlayer" />
       </div>
+      <div class="mobile-reveal">
+        <PlayerLine v-for="dat in revealLine" :name="dat[0]" :img="dat[1]"
+          :selected="dat[0] === this.currentRevealPlayer" />
+      </div>
       <div class="scroll" ref="scroll">
-        <div v-for="(dat, index) in revealData" v-if="canvasRender">
+        <div v-for="(dat, index) in revealData" v-if="canvasRender" class="center-horizontal scroll">
 
           <CanvasView :stageConfig="stageConfig" :loadedImages="dat.image?.images"
             :imageConfig="dat.image?.imageTransform" :textList="dat.image?.text"
@@ -368,14 +393,13 @@ export default {
             this.names[i].ready = false
           }
         }
-      }else if (message.func === "everyoneUnready") {
+      } else if (message.func === "everyoneUnready") {
         for (let i = 0; i < this.names.length; i++) {
           this.names[i].ready = false
         }
       } else if (message.func === "finished") {
         console.log("finished: ")
         console.log(message)
-        this.revealLine = message.line
         this.setRevealContent(message)
 
       } else if (message.func === "base64") {
@@ -426,7 +450,7 @@ export default {
           this.$router.push("/")
         }
       } else if (message.func === "stop") {
-        if(!message.stopByHost){
+        if (!message.stopByHost) {
           this.setCookies("showPlayerStopToast", "true")
         }
         this.$router.push("/player")
@@ -550,7 +574,7 @@ export default {
       this.send(dat)
     },
 
-    onClickCancelFinish(){
+    onClickCancelFinish() {
       this.selfReady = false
       let dat = {
         type: "engine",
@@ -593,6 +617,7 @@ export default {
       let message = { "func": "finished", "line": [["Jason", "squid"], ["Marcel", "sigma"]], "sessionData": [[{ "player": "Jason", "content": "tisch" }, { "player": "Jason", "content": { "images": ["https://w7.pngwing.com/pngs/631/788/png-transparent-table-wood-tables-orange-table-illustration-angle-furniture-rectangle-thumbnail.png"], "imageTransform": [" translate(235px, 182px) "], "text": [], "textTransform": [] } }], [{ "player": "Marcel", "content": "stuhl" }, { "player": "Marcel", "content": { "images": ["https://w7.pngwing.com/pngs/986/34/png-transparent-office-desk-chairs-swivel-chair-chair-angle-furniture-office-thumbnail.png"], "imageTransform": [" translate(231px, 135px) "], "text": [], "textTransform": [] } }]] }
       message = message1
 
+      this.revealLine = message.line
 
       for (let k = 0; k < message.sessionData.length; k++) {
         let sessionData = message.sessionData[k]
@@ -807,7 +832,7 @@ export default {
       this.stopGame(true)
     },
 
-    stopGame(stopByHost){
+    stopGame(stopByHost) {
       let dat = {
         type: "engine",
         func: "stop",
@@ -837,7 +862,7 @@ export default {
           func: "kill"
         }
         this.send(dat)
-      }else{
+      } else {
         let dat = {
           type: "register",
           func: "removePlayer",

@@ -1,3 +1,12 @@
+<style>
+
+.reveal-prompt{
+  max-width: 800px;
+  width: 100vw;
+}
+
+</style>
+
 <template>
   <div class="reveal-canvas relative" v-if="prompt === undefined">
     <div v-for="(imageUrl, index) in loadedImages">
@@ -9,7 +18,7 @@
       </div>
     </div>
   </div>
-  <div class="center white-background" style="width: 800px;" v-else>
+  <div class="center white-background reveal-prompt" v-else>
     <h2 class="text-center black" style="margin-top: 5px; margin-bottom: 5px">{{ prompt }}</h2>
     </div>
 </template>

@@ -23,7 +23,7 @@
   </div>
 
   <div class="center-horizontal">
-    <PlayerView v-for="(dat) in names" :name="dat.name" :img="dat.pb" />
+    <PlayerView v-for="(dat) in names" :name="dat.name" :img="dat.pb"/>
   </div>
 
   <div class="button-layout center-horizontal" v-if="isHost">

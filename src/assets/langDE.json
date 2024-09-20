@@ -29,6 +29,7 @@
     "heartErrorWrongNumber": "Der Wert für die Herzenanzahl darf nicht kleiner als '1' sein.",
     "heartErrorEmpty": "Das Textfeld für die Herzenanzahl darf nicht leer sein.",
     "needMorePlayers": "Du brauchst mindestens 3 Spieler.",
+    "waitReady": "Warte bis alle Spieler bereit sind",
     "closedByUser": "Der Raum wurde geschlossen, weil ein Spieler das Spiel verlassen hat",
     "joinLink": "Link anzeigen"
   },
@@ -47,6 +48,7 @@
     "transformSize": "Größe",
     "restartGame": "Nochmal spielen",
     "stopGame": "Spiel stoppen",
+    "notSupportedScreen": "Deine Bildschirmgröße ist nicht optimiert. Es kann zu Problemen führen.",
     "transformRotation": "Drehung"
   },
   "jwc": {

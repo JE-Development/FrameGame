@@ -28,7 +28,7 @@
         </div>
       </div>
       <div style="margin-top: 10px" />
-      <div class="center-horizontal">
+      <div class="center-mobile">
         <div class="center-horizontal">
           <UIButton :title="lang.register.roomButton" @click="onClickRoom" color="line1" />
         </div>

@@ -1,4 +1,4 @@
-.register-button{
+.register-button {
     display: flex;
     width: 300px;
     height: 50px;
@@ -11,7 +11,7 @@
     font-size: 25px;
 }
 
-.game-button-default{
+.game-button-default {
     display: flex;
     width: 140px;
     height: 50px;
@@ -26,30 +26,30 @@
     font-size: 25px;
 }
 
-.game-button-drop{
+.game-button-drop {
     background: #b4c9ff;
 }
 
-.game-button-move{
+.game-button-move {
     background: #b4eeff;
 }
 
-.game-button-view{
+.game-button-view {
     background: #e9ffc1;
 }
 
-.game-button-reveal{
+.game-button-reveal {
     background: #ffadbc;
 }
 
-.link-background{
+.link-background {
     width: auto;
     background: #e3e3e3;
     padding-right: 5px;
     padding-left: 5px;
 }
 
-.to-draw-text{
+.to-draw-text {
     width: auto;
     font-size: 30px;
     background: #ffffff;
@@ -57,7 +57,7 @@
     padding-right: 10px;
 }
 
-input{
+input {
     outline: none !important;
     font-size: 20px;
     border: solid;
@@ -66,56 +66,57 @@ input{
     background-image: linear-gradient(90deg, #f7deff, #e7cbff);
 }
 
-.register-input{
-    width: 400px;
+.register-input {
+    max-width: 400px;
+    width: 90vw;
     height: 30px;
 }
 
-input:focus{
+input:focus {
     border-color: #4299E1
 }
 
-.canvas{
+.canvas {
+    min-width: 800px;
+    height: 600px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.reveal-canvas {
     width: 800px;
     height: 600px;
     background: #ffffff;
     overflow: hidden;
 }
 
-.reveal-canvas{
-    width: 800px;
-    height: 600px;
-    background: #ffffff;
-    overflow: hidden;
-}
-
-.prompt-input{
+.prompt-input {
     width: 90vw;
     max-width: 730px;
     height: 30px;
 }
 
-.google-search-input{
+.google-search-input {
     width: 90vw;
     max-width: 400px;
     height: 30px;
 }
 
-.search-image{
+.search-image {
     max-width: 400px;
     max-height: 400px;
     background: transparent;
 }
 
-.profile-picture{
+.profile-picture {
     width: 50px;
 }
 
-.slider{
+.slider {
     width: 200px;
 }
 
-.player-card{
+.player-card {
     margin: 10px;
     border: solid 2px;
     border-color: transparent;
@@ -125,12 +126,12 @@ input:focus{
     border-radius: 20px;
 }
 
-.player-card-selected{
+.player-card-selected {
     border: solid 2px;
     border-color: white;
 }
 
-.dice-border{
+.dice-border {
     padding: 7px;
     font-weight: bold;
     border-radius: 8px;
@@ -147,7 +148,7 @@ input:focus{
     font-size: 15px;
 }
 
-.dice-border-m{
+.dice-border-m {
     width: 100px;
 
     margin: 2px;
@@ -169,98 +170,104 @@ input:focus{
 
 
 
-.line1{
+.line1 {
     background-image: linear-gradient(90deg, #c9ff8a, #8affce);
 }
-.line2{
+
+.line2 {
     background-image: linear-gradient(90deg, #83ffa6, #83ffee);
 }
-.line3{
+
+.line3 {
     background-image: linear-gradient(90deg, #5cf0ff, #3b6fff);
 }
-.line4{
+
+.line4 {
     background-image: linear-gradient(90deg, #8999ff, #c689ff);
 }
-.line5{
+
+.line5 {
     background-image: linear-gradient(90deg, #ff88d9, #ff8888);
 }
-.line6{
+
+.line6 {
     background-image: linear-gradient(90deg, #ffa600, #d9ff00);
 }
 
-.prim-color{
+.prim-color {
     color: #ffa600;
 }
 
-.prim-color-background{
+.prim-color-background {
     background-image: linear-gradient(90deg, #ff9100, #ffee00);
 
 }
 
-.sec-color{
+.sec-color {
     background: #5cf0ff;
 }
 
-.third-color-background{
+.third-color-background {
     background: #c9ff8a;
 }
 
-.fourth-color-background{
+.fourth-color-background {
     background: #bfc7ff;
 }
 
-.fifth-color-background{
-    background: #ff88d9;;
+.fifth-color-background {
+    background: #ff88d9;
+    ;
 }
 
-.texture{
+.texture {
     background-image: url("./texture1.png");
 }
 
-.shadow{
+.shadow {
     box-shadow: 0px 0px 20px #e100ff;
 }
 
-.sec-color-text{
+.sec-color-text {
     color: #5cf0ff
 }
 
-.white-background{
+.white-background {
     background: #ffffff;
 }
 
-.dice-image{
+.dice-image {
     margin-top: 295px;
     width: 50px;
 }
 
-.crown{
+.crown {
     width: 45px;
     height: 20px;
     transform: translateY(13px);
 }
 
-.check-box{
+.check-box {
     width: 30px;
     height: 30px;
 }
 
-.check-box-label{
+.check-box-label {
     margin-left: 10px;
     font-size: 20px;
 }
 
-.check-box-text{
+.check-box-text {
     color: #76ffba;
 }
 
-.check-view{
+.check-view {
     margin-top: 10px;
     display: flex;
 
 }
 
-.lang-border{
+.lang-border {
     display: flex;
     padding: 2px;
     width: 70px;
@@ -270,14 +277,57 @@ input:focus{
     border-color: #5cf0ff;
 }
 
-.public-room{
+.public-room {
     width: 300px;
     height: 50px;
     margin: 15px;
 }
 
-.dashboard-room{
+.dashboard-room {
     width: 500px;
     height: 50px;
     margin: 15px
+}
+
+.mobile-layer-layout {
+    display: inline-block;
+}
+
+.mobile-reveal-desktop {
+    display: inline-block;
+}
+
+.mobile-reveal {
+    display: none;
+}
+
+@media (max-width: 1060px) {
+    .mobile-layer-layout {
+        display: none;
+    }
+
+    .mobile-reveal-desktop {
+        display: none;
+    }
+
+    .mobile-reveal {
+        display: inline-block;
+    }
+}
+
+@media (max-width: 800px) {
+    .canvas {
+        min-width: 100vw;
+    }
+
+    .reveal-canvas {
+        min-width: 800px;
+    }
+}
+
+@media (max-width: 570px) {
+    .link-background {
+        width: 100vw;
+        font-size: 4.4vw;
+    }
 }
