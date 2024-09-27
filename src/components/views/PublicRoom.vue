@@ -1,12 +1,12 @@
 <template>
 
-    <div class="prim-color-background round-corner pointer public-room center-vertical texture shadow"  @click="clicked">
+    <div class="line4 round-corner pointer public-room center-vertical shadow"  @click="clicked">
       <div style="width: 70%" class="flex">
         <div style="width: 10px"></div>
         <h2>{{hoster}}</h2>
       </div>
       <div style="width: 30%" class="center">
-        <img src="../../assets/default_pb.png" style="width: 35px; height: 35px">
+        <img :src="'../../src/assets/pb/' + pb + '.png'" style="width: 35px; height: 35px" class="pb">
         <div style="width: 5px"></div>
         <h2>{{playerCount}}</h2>
       </div>
@@ -27,7 +27,8 @@ export default {
     props:{
         hoster: String,
         playerCount: String,
-      rc: String
+      rc: String,
+      pb: String
     },
 
     created() {

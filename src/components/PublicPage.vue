@@ -14,6 +14,7 @@
           :hoster="dat.hoster"
           :playerCount="dat.playerCount"
           :rc="dat.rc"
+          :pb="dat.pb"
           @clicked="clicked"
       />
     </div>
@@ -72,7 +73,7 @@ export default {
 
         this.socket.addEventListener('message', (event) => {
           const message = JSON.parse(event.data)
-          //console.log(message)
+          console.log(message)
           if(message.func === "error"){
 
             console.error(message.text)
